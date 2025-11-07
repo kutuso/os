@@ -124,6 +124,27 @@ prepare_build_env() {
     cp "$PROJECT_ROOT/configs/desktop/branding/"*.svg \
        "$BUILD_DIR/airootfs/usr/share/pixmaps/" 2>/dev/null || true
 
+    # Copy themes
+    log "Installing themes..."
+    mkdir -p "$BUILD_DIR/airootfs/usr/share/color-schemes"
+    cp "$PROJECT_ROOT/configs/desktop/themes/"*.colors \
+       "$BUILD_DIR/airootfs/usr/share/color-schemes/" 2>/dev/null || true
+
+    mkdir -p "$BUILD_DIR/airootfs/usr/share/konsole"
+    cp "$PROJECT_ROOT/configs/desktop/themes/"*.colorscheme \
+       "$BUILD_DIR/airootfs/usr/share/konsole/" 2>/dev/null || true
+
+    # Copy wallpapers
+    mkdir -p "$BUILD_DIR/airootfs/usr/share/wallpapers"
+    cp "$PROJECT_ROOT/configs/desktop/wallpapers/"*.svg \
+       "$BUILD_DIR/airootfs/usr/share/wallpapers/" 2>/dev/null || true
+
+    # Copy documentation
+    log "Installing documentation..."
+    mkdir -p "$BUILD_DIR/airootfs/usr/share/doc/kutu"
+    cp "$PROJECT_ROOT/docs/"*.md \
+       "$BUILD_DIR/airootfs/usr/share/doc/kutu/" 2>/dev/null || true
+
     # Create first-boot service
     log "Creating first-boot systemd service..."
     mkdir -p "$BUILD_DIR/airootfs/etc/systemd/system"
@@ -150,6 +171,16 @@ EOF
            "$BUILD_DIR/airootfs/etc/systemd/system/multi-user.target.wants/"
 
     log "Build environment prepared."
+}
+
+install_ml_software() {
+    log "Installing ML software into ISO..."
+    log "This will take 30-60 minutes and significantly increase ISO size..."
+
+    # Run software installation in chroot
+    bash "$SCRIPT_DIR/build-time-install-software.sh" "$BUILD_DIR/airootfs" || warn "Software installation had issues"
+
+    log "ML software installation complete!"
 }
 
 build_iso() {
@@ -187,9 +218,24 @@ main() {
     log "==================================="
     log ""
 
+    # Check for --with-software flag
+    WITH_SOFTWARE=false
+    if [[ "$1" == "--with-software" ]]; then
+        WITH_SOFTWARE=true
+        log "Building with ML software pre-installed"
+    fi
+
     check_root
     check_dependencies
     prepare_build_env
+
+    # Install ML software if requested
+    if [ "$WITH_SOFTWARE" = true ]; then
+        install_ml_software
+    else
+        log "Skipping ML software installation (use --with-software to include)"
+    fi
+
     build_iso
     show_results
 

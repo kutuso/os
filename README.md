@@ -79,26 +79,62 @@ kutu-os/
 - At least 20GB free disk space
 - Root/sudo access
 
-### Build Instructions
+### Quick Start with Makefile
+
+```bash
+# Clone repository
+git clone https://github.com/kutu-so/os.git kutu-os
+cd kutu-os
+
+# Check system requirements
+make check
+
+# Install dependencies
+make install-deps
+
+# Build the ISO
+sudo make build
+
+# Test in QEMU
+make test
+
+# Output will be in out/
+```
+
+### Build Instructions (Alternative)
 
 ```bash
 # Install dependencies
 sudo pacman -S archiso
 
-# Clone repository
-git clone https://github.com/kutu-so/os.git kutu-os
-cd kutu-os
-
-# Build the ISO
+# Build the ISO using the script directly
 sudo ./scripts/build.sh
 
 # Output will be in out/
 ```
 
+### Available Make Targets
+
+```bash
+make help          # Show all available commands
+make build         # Build the kutu OS ISO
+make clean         # Remove build artifacts
+make test          # Test ISO in QEMU
+make install-deps  # Install required dependencies
+make check         # Check system requirements
+make validate      # Validate configuration files
+make install-usb   # Interactive USB installation
+make docs          # View documentation
+make info          # Show build information
+```
+
 ### Installation
 
 ```bash
-# Write to USB drive (replace /dev/sdX with your device)
+# Method 1: Using Makefile (interactive, safer)
+sudo make install-usb
+
+# Method 2: Manual dd command (replace /dev/sdX with your device)
 sudo dd if=out/kutu-os-*.iso of=/dev/sdX bs=4M status=progress
 
 # Boot from USB and follow installer

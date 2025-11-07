@@ -19,18 +19,61 @@ sudo pacman -S archiso squashfs-tools libisoburn dosfstools
 
 ## Build Process
 
-### 1. Clone the Repository
+### Quick Start (Recommended)
 
 ```bash
+# Clone the repository
 git clone https://github.com/kutu-so/os.git kutu-os
 cd kutu-os
+
+# Check system and install dependencies
+make check
+make install-deps
+
+# Build the ISO
+sudo make build
+
+# Test it
+make test
 ```
 
-### 2. Run the Build Script
+### Method 1: Using Makefile (Recommended)
+
+The Makefile provides a convenient interface to all build operations:
+
+```bash
+# Show all available commands
+make help
+
+# Check if your system meets requirements
+make check
+
+# Install required packages
+make install-deps
+
+# Validate configuration files
+make validate
+
+# Build the ISO
+sudo make build
+
+# Clean build artifacts
+sudo make clean
+
+# Test in QEMU
+make test
+
+# Write to USB interactively
+sudo make install-usb
+```
+
+### Method 2: Using Build Script Directly
 
 ```bash
 sudo ./scripts/build.sh
 ```
+
+### Build Process Details
 
 The build process will:
 1. Check dependencies and install if missing
@@ -39,7 +82,7 @@ The build process will:
 4. Build the ISO image (10-30 minutes)
 5. Output the ISO to `out/` directory
 
-### 3. Build Output
+### Build Output
 
 After successful build, you'll find:
 
@@ -47,6 +90,23 @@ After successful build, you'll find:
 out/
 └── kutu-os-YYYY.MM.DD-x86_64.iso
 ```
+
+### Makefile Targets Explained
+
+| Target | Description | Requires Root |
+|--------|-------------|---------------|
+| `make help` | Show all available commands | No |
+| `make build` | Build the ISO image | Yes |
+| `make clean` | Remove build artifacts | Yes |
+| `make distclean` | Remove build artifacts and ISOs | Yes |
+| `make test` | Test ISO in QEMU | No |
+| `make install-deps` | Install required packages | No (uses sudo) |
+| `make check` | Check system requirements | No |
+| `make validate` | Validate configuration files | No |
+| `make install-usb` | Write ISO to USB (interactive) | Yes |
+| `make docs` | View documentation | No |
+| `make info` | Show build information | No |
+| `make quick` | Build and test in one command | Yes |
 
 ## Testing the ISO
 
