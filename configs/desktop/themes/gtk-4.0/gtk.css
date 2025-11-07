@@ -1,0 +1,148 @@
+/* kutu OS GTK4 Dark Theme with Pastel Rainbow Accents */
+
+/* Import base styling from GTK3 */
+/* This is a simplified version for GTK4 */
+
+/* Color Variables */
+@define-color window_bg_color #181825;
+@define-color window_fg_color #cdd6f4;
+@define-color view_bg_color #1e1e2e;
+@define-color view_fg_color #cdd6f4;
+@define-color accent_bg_color #BAE1FF;
+@define-color accent_fg_color #181825;
+@define-color headerbar_bg_color #1e1e2e;
+@define-color headerbar_fg_color #cdd6f4;
+@define-color card_bg_color #1e1e2e;
+@define-color popover_bg_color #1e1e2e;
+@define-color dialog_bg_color #181825;
+
+/* Pastel Rainbow Accents */
+@define-color accent_pink #FFB3BA;
+@define-color accent_peach #FFDFBA;
+@define-color accent_yellow #FFFFBA;
+@define-color accent_green #BAFFC9;
+@define-color accent_blue #BAE1FF;
+@define-color accent_purple #D4BAFF;
+@define-color accent_magenta #FFB3E6;
+
+/* Success/Warning/Error using pastels */
+@define-color success_color #BAFFC9;
+@define-color warning_color #FFFFBA;
+@define-color error_color #FFB3BA;
+
+/* Border colors */
+@define-color borders #45475a;
+
+/* Window */
+window {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
+}
+
+/* Views */
+view,
+textview text {
+    background-color: @view_bg_color;
+    color: @view_fg_color;
+}
+
+/* Cards */
+.card {
+    background-color: @card_bg_color;
+    border: 1px solid @borders;
+    border-radius: 12px;
+}
+
+/* Buttons */
+button {
+    background-color: @view_bg_color;
+    color: @window_fg_color;
+    border: 1px solid @borders;
+    border-radius: 8px;
+    padding: 8px 16px;
+}
+
+button:hover {
+    background-color: @accent_blue;
+    color: @accent_fg_color;
+}
+
+button:active {
+    background-color: @accent_purple;
+}
+
+button.suggested-action {
+    background-color: @accent_green;
+    color: @accent_fg_color;
+    border: none;
+}
+
+button.destructive-action {
+    background-color: @accent_pink;
+    color: @accent_fg_color;
+    border: none;
+}
+
+/* Entry */
+entry {
+    background-color: @view_bg_color;
+    color: @view_fg_color;
+    border: 1px solid @borders;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+entry:focus {
+    border-color: @accent_blue;
+    outline: 2px solid alpha(@accent_blue, 0.3);
+}
+
+/* Headerbar */
+headerbar {
+    background-color: @headerbar_bg_color;
+    color: @headerbar_fg_color;
+    border-bottom: 1px solid @borders;
+}
+
+/* Progress Bar */
+progressbar {
+    background-color: @view_bg_color;
+    border-radius: 10px;
+}
+
+progressbar progress {
+    background-image: linear-gradient(90deg,
+        @accent_pink,
+        @accent_peach,
+        @accent_yellow,
+        @accent_green,
+        @accent_blue,
+        @accent_purple,
+        @accent_magenta
+    );
+    border-radius: 10px;
+}
+
+/* Switch */
+switch {
+    background-color: @view_bg_color;
+    border: 1px solid @borders;
+    border-radius: 16px;
+}
+
+switch:checked {
+    background-color: @accent_green;
+}
+
+/* Checkboxes */
+checkbutton check {
+    background-color: @view_bg_color;
+    border: 1px solid @borders;
+    border-radius: 6px;
+}
+
+checkbutton check:checked {
+    background-color: @accent_blue;
+    border-color: @accent_blue;
+    color: @accent_fg_color;
+}

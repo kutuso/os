@@ -1,0 +1,223 @@
+/* kutu OS GTK3 Dark Theme with Pastel Rainbow Accents */
+
+/* Color Variables */
+@define-color theme_bg_color #181825;
+@define-color theme_fg_color #cdd6f4;
+@define-color theme_base_color #1e1e2e;
+@define-color theme_text_color #cdd6f4;
+@define-color theme_selected_bg_color #BAE1FF;
+@define-color theme_selected_fg_color #181825;
+@define-color insensitive_bg_color #313244;
+@define-color insensitive_fg_color #6c7086;
+@define-color borders #45475a;
+
+/* Pastel Rainbow Accent Colors */
+@define-color accent_pink #FFB3BA;
+@define-color accent_peach #FFDFBA;
+@define-color accent_yellow #FFFFBA;
+@define-color accent_green #BAFFC9;
+@define-color accent_blue #BAE1FF;
+@define-color accent_purple #D4BAFF;
+@define-color accent_magenta #FFB3E6;
+
+/* Window Background */
+window {
+    background-color: @theme_bg_color;
+    color: @theme_fg_color;
+}
+
+/* Buttons */
+button {
+    background-color: @theme_base_color;
+    color: @theme_fg_color;
+    border: 1px solid @borders;
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+
+button:hover {
+    background-color: @accent_blue;
+    color: @theme_bg_color;
+    border-color: @accent_blue;
+}
+
+button:active {
+    background-color: @accent_purple;
+    color: @theme_bg_color;
+}
+
+button:disabled {
+    background-color: @insensitive_bg_color;
+    color: @insensitive_fg_color;
+}
+
+/* Entries (Text Input) */
+entry {
+    background-color: @theme_base_color;
+    color: @theme_text_color;
+    border: 1px solid @borders;
+    border-radius: 6px;
+    padding: 6px;
+}
+
+entry:focus {
+    border-color: @accent_blue;
+    box-shadow: 0 0 0 2px rgba(186, 225, 255, 0.2);
+}
+
+/* Selection */
+selection,
+*:selected {
+    background-color: @theme_selected_bg_color;
+    color: @theme_selected_fg_color;
+}
+
+/* Scrollbars */
+scrollbar {
+    background-color: transparent;
+}
+
+scrollbar slider {
+    background-color: @borders;
+    border-radius: 10px;
+    min-width: 10px;
+    min-height: 10px;
+}
+
+scrollbar slider:hover {
+    background-color: @accent_blue;
+}
+
+/* Notebook (Tabs) */
+notebook {
+    background-color: @theme_bg_color;
+}
+
+notebook header {
+    background-color: @theme_base_color;
+    border-bottom: 1px solid @borders;
+}
+
+notebook tab {
+    background-color: @theme_base_color;
+    color: @theme_fg_color;
+    padding: 8px 16px;
+    border: 1px solid transparent;
+}
+
+notebook tab:hover {
+    background-color: @accent_blue;
+    color: @theme_bg_color;
+}
+
+notebook tab:checked {
+    background-color: @theme_bg_color;
+    border-bottom: 2px solid @accent_blue;
+}
+
+/* Menus */
+menu,
+.menu {
+    background-color: @theme_base_color;
+    color: @theme_fg_color;
+    border: 1px solid @borders;
+    border-radius: 6px;
+    padding: 4px;
+}
+
+menuitem {
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+
+menuitem:hover {
+    background-color: @accent_blue;
+    color: @theme_bg_color;
+}
+
+/* Tooltips */
+tooltip {
+    background-color: @theme_base_color;
+    color: @theme_fg_color;
+    border: 1px solid @borders;
+    border-radius: 6px;
+    padding: 6px 10px;
+}
+
+/* Progress Bars */
+progressbar {
+    background-color: @theme_base_color;
+    border-radius: 10px;
+}
+
+progressbar progress {
+    background-image: linear-gradient(90deg,
+        @accent_pink,
+        @accent_peach,
+        @accent_yellow,
+        @accent_green,
+        @accent_blue,
+        @accent_purple,
+        @accent_magenta
+    );
+    border-radius: 10px;
+}
+
+/* Links */
+link,
+*:link {
+    color: @accent_blue;
+}
+
+link:visited,
+*:visited {
+    color: @accent_purple;
+}
+
+/* Switches */
+switch {
+    background-color: @theme_base_color;
+    border: 1px solid @borders;
+    border-radius: 14px;
+}
+
+switch:checked {
+    background-color: @accent_green;
+}
+
+switch slider {
+    background-color: @theme_fg_color;
+    border-radius: 50%;
+}
+
+/* Checkboxes and Radio Buttons */
+checkbutton check,
+radiobutton radio {
+    background-color: @theme_base_color;
+    border: 1px solid @borders;
+    border-radius: 4px;
+}
+
+checkbutton check:checked,
+radiobutton radio:checked {
+    background-color: @accent_blue;
+    border-color: @accent_blue;
+    color: @theme_bg_color;
+}
+
+/* Headerbar */
+headerbar {
+    background-color: @theme_base_color;
+    color: @theme_fg_color;
+    border-bottom: 1px solid @borders;
+    padding: 6px;
+}
+
+headerbar button {
+    background-color: transparent;
+}
+
+headerbar button:hover {
+    background-color: @accent_blue;
+    color: @theme_bg_color;
+}
