@@ -1,0 +1,44 @@
+# kutu OS gitignore
+
+# Build artifacts
+work/
+out/
+*.iso
+*.img
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Package manager cache
+*.pkg.tar.zst
+*.pkg.tar.xz
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-*
+
+# Custom configs (if user-specific)
+configs/local/
+
+# Secrets (should never be committed)
+*.key
+*.pem
+*.crt
+secrets/
+
+# Test artifacts
+test-results/
+coverage/
+
+# System files
+.Trash-*/
+Thumbs.db

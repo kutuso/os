@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- kutu OS Wallpaper - Soft Gradient Blur -->
+<svg width="3840" height="2160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Multiple radial gradients for soft blobs -->
+    <radialGradient id="blob1">
+      <stop offset="0%" style="stop-color:#FFB3BA;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#FFB3BA;stop-opacity:0" />
+    </radialGradient>
+
+    <radialGradient id="blob2">
+      <stop offset="0%" style="stop-color:#BAFFC9;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#BAFFC9;stop-opacity:0" />
+    </radialGradient>
+
+    <radialGradient id="blob3">
+      <stop offset="0%" style="stop-color:#BAE1FF;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#BAE1FF;stop-opacity:0" />
+    </radialGradient>
+
+    <radialGradient id="blob4">
+      <stop offset="0%" style="stop-color:#D4BAFF;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#D4BAFF;stop-opacity:0" />
+    </radialGradient>
+
+    <radialGradient id="blob5">
+      <stop offset="0%" style="stop-color:#FFFFBA;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#FFFFBA;stop-opacity:0" />
+    </radialGradient>
+
+    <!-- Base gradient -->
+    <linearGradient id="base-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8F4F8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F8E8F4;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Gaussian blur for soft effect -->
+    <filter id="blur">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="100" />
+    </filter>
+  </defs>
+
+  <!-- Base light background -->
+  <rect width="3840" height="2160" fill="url(#base-gradient)"/>
+
+  <!-- Blurred color blobs -->
+  <g filter="url(#blur)">
+    <circle cx="500" cy="400" r="600" fill="url(#blob1)"/>
+    <circle cx="3200" cy="300" r="700" fill="url(#blob2)"/>
+    <circle cx="1920" cy="1080" r="800" fill="url(#blob3)"/>
+    <circle cx="600" cy="1700" r="600" fill="url(#blob4)"/>
+    <circle cx="3000" cy="1800" r="650" fill="url(#blob5)"/>
+  </g>
+
+  <!-- Center content area with logo -->
+  <g transform="translate(1664, 824)">
+    <!-- Glass-morphism effect background -->
+    <rect x="-100" y="-100" width="712" height="712" rx="120" ry="120"
+          fill="white" opacity="0.3"
+          style="backdrop-filter: blur(10px); filter: drop-shadow(0 20px 50px rgba(0,0,0,0.1));"/>
+
+    <!-- Logo -->
+    <rect x="0" y="0" width="512" height="512" rx="80" ry="80"
+          fill="white" opacity="0.8"
+          style="filter: drop-shadow(0 10px 30px rgba(0,0,0,0.2));"/>
+
+    <rect x="20" y="20" width="472" height="472" rx="70" ry="70">
+      <animate attributeName="fill"
+               values="#FFB3BA;#FFDFBA;#FFFFBA;#BAFFC9;#BAE1FF;#D4BAFF;#FFB3E6;#FFB3BA"
+               dur="20s"
+               repeatCount="indefinite"/>
+    </rect>
+
+    <text x="256" y="340"
+          font-family="Arial, sans-serif"
+          font-size="280"
+          font-weight="bold"
+          fill="white"
+          text-anchor="middle"
+          style="text-shadow: 2px 2px 8px rgba(0,0,0,0.3);">K</text>
+  </g>
+</svg>

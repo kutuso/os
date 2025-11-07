@@ -1,0 +1,192 @@
+# kutu OS Package List
+# Base system packages for Arch Linux
+
+### Core System ###
+base
+base-devel
+linux
+linux-firmware
+linux-headers
+mkinitcpio
+grub
+efibootmgr
+os-prober
+
+### Boot and Init ###
+systemd
+systemd-sysvcompat
+
+### Networking ###
+networkmanager
+network-manager-applet
+avahi
+nss-mdns
+openssh
+wget
+curl
+rsync
+
+### File Systems ###
+dosfstools
+ntfs-3g
+exfat-utils
+btrfs-progs
+xfsprogs
+e2fsprogs
+
+### Storage Optimizations ###
+nvme-cli
+smartmontools
+hdparm
+fstrim
+
+### Compression ###
+zip
+unzip
+p7zip
+xz
+zstd
+
+### System Tools ###
+htop
+btop
+iotop
+iftop
+nethogs
+ncdu
+tmux
+screen
+vim
+nano
+git
+
+### Hardware Monitoring ###
+lm_sensors
+hddtemp
+
+### Display Server ###
+xorg-server
+xorg-xinit
+xorg-apps
+wayland
+weston
+
+### Desktop Environment (KDE Plasma) ###
+plasma-meta
+plasma-desktop
+plasma-workspace
+kde-applications-meta
+sddm
+konsole
+dolphin
+kate
+
+### Fonts ###
+ttf-dejavu
+ttf-liberation
+noto-fonts
+noto-fonts-emoji
+ttf-hack
+ttf-fira-code
+
+### Audio ###
+pipewire
+pipewire-alsa
+pipewire-pulse
+pipewire-jack
+wireplumber
+
+### Graphics Libraries ###
+mesa
+vulkan-tools
+vulkan-icd-loader
+
+### Container Runtime ###
+docker
+docker-compose
+containerd
+
+### Development Tools ###
+gcc
+clang
+cmake
+make
+git
+python
+python-pip
+python-virtualenv
+rust
+go
+
+### Build Tools ###
+autoconf
+automake
+pkgconf
+patch
+fakeroot
+
+### Monitoring Tools ###
+htop
+nvtop
+iotop
+sysstat
+dstat
+
+### Utilities ###
+man-db
+man-pages
+bash-completion
+tree
+wget
+curl
+rsync
+sudo
+which
+less
+
+### Archive Support ###
+zip
+unzip
+tar
+gzip
+bzip2
+xz
+
+### System Information ###
+neofetch
+lshw
+dmidecode
+usbutils
+pciutils
+
+### Text Processing ###
+sed
+awk
+grep
+jq
+
+### Performance Tools ###
+perf
+strace
+ltrace
+
+### Security ###
+ufw
+fail2ban
+apparmor
+
+### Power Management ###
+cpupower
+thermald
+tlp
+
+### Additional CLI Tools ###
+fzf
+ripgrep
+fd
+bat
+exa
+
+### Misc ###
+reflector
+pacman-contrib

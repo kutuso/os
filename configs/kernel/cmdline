@@ -1,0 +1,52 @@
+# kutu OS Kernel Command Line Parameters
+# Optimized for ML inference workloads
+
+# Root filesystem
+root=/dev/sda2 rw
+
+# Boot splash
+quiet splash
+
+# CPU Optimizations
+mitigations=off
+nohz=off
+nohz_full=1-15
+rcu_nocbs=1-15
+isolcpus=1-15
+
+# Memory Management
+transparent_hugepage=always
+hugepagesz=2M
+default_hugepagesz=2M
+
+# NVMe Optimizations
+nvme_core.default_ps_max_latency_us=0
+
+# CPU Frequency Scaling
+# For Intel:
+intel_pstate=passive
+# For AMD:
+# amd_pstate=active
+
+# PCIe Optimizations
+pcie_aspm=off
+
+# Scheduler
+preempt=voluntary
+
+# Disable watchdog (slight performance gain)
+nowatchdog
+
+# I/O Scheduler
+elevator=mq-deadline
+
+# Reduce boot time
+systemd.show_status=false
+
+# GPU-specific (uncomment as needed)
+# NVIDIA:
+# nvidia-drm.modeset=1
+# AMD:
+# amdgpu.ppfeaturemask=0xffffffff
+# Intel:
+# i915.enable_guc=3

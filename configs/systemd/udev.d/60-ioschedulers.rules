@@ -1,0 +1,22 @@
+# kutu OS I/O Scheduler Rules
+# /etc/udev/rules.d/60-ioschedulers.rules
+# Optimized schedulers for different storage types
+
+# NVMe - use none (for NVMe native multiqueue)
+ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/scheduler}="none"
+
+# SSD - use mq-deadline
+ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline"
+
+# HDD - use bfq for better latency
+ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
+
+# Increase queue depth for NVMe
+ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/nr_requests}="1024"
+
+# Disable add_random for SSDs/NVMe (slight performance gain)
+ACTION=="add|change", KERNEL=="nvme[0-9]*|sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/add_random}="0"
+
+# Read-ahead optimization (8MB for NVMe, 2MB for SSD)
+ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{bdi/read_ahead_kb}="8192"
+ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{bdi/read_ahead_kb}="2048"
