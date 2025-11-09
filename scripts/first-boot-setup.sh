@@ -48,6 +48,16 @@ fi
 log "Configuring CPU for performance..."
 /usr/local/bin/setup-cpu-governor.sh || log "Warning: CPU governor setup had issues"
 
+# Apply kernel optimizations
+log "Applying kernel optimizations for AI workloads..."
+log "Detecting hardware and configuring kernel parameters..."
+if [[ -x /usr/local/bin/install-kernel-optimizations.sh ]]; then
+    # Run in non-interactive mode (no reboot prompt)
+    /usr/local/bin/install-kernel-optimizations.sh --non-interactive || log "Warning: Kernel optimization had issues"
+else
+    log "Warning: install-kernel-optimizations.sh not found, skipping"
+fi
+
 # Setup monitoring tools
 log "Setting up system monitoring..."
 /usr/local/bin/setup-monitoring.sh || log "Warning: Monitoring setup had issues"
@@ -102,12 +112,16 @@ touch "$SETUP_MARKER"
 echo "$(date)" > "$SETUP_MARKER"
 
 log "=== First Boot Setup Complete ==="
-log "System is ready. Reboot recommended to apply all changes."
+log ""
+log "IMPORTANT: Kernel optimizations have been applied."
+log "A REBOOT IS REQUIRED for all optimizations to take effect."
 log ""
 log "Next steps:"
 log "  1. Reboot the system: sudo reboot"
-log "  2. Install application stack (inference engines, web UI)"
-log "  3. Deploy your first model!"
+log "  2. After reboot, validate kernel config: sudo validate-kernel.sh"
+log "  3. Monitor performance: monitor-kernel.sh"
+log "  4. Install application stack (inference engines, web UI)"
+log "  5. Deploy your first model!"
 log ""
 log "For more information, visit: https://kutu.so/docs"
 

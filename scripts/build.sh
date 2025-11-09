@@ -115,8 +115,22 @@ prepare_build_env() {
        "$BUILD_DIR/airootfs/usr/local/bin/" 2>/dev/null || true
     cp "$PROJECT_ROOT/scripts/first-boot-setup.sh" \
        "$BUILD_DIR/airootfs/usr/local/bin/" 2>/dev/null || true
+    cp "$PROJECT_ROOT/scripts/validate-kernel.sh" \
+       "$BUILD_DIR/airootfs/usr/local/bin/" 2>/dev/null || true
+    cp "$PROJECT_ROOT/scripts/monitor-kernel.sh" \
+       "$BUILD_DIR/airootfs/usr/local/bin/" 2>/dev/null || true
+    cp "$PROJECT_ROOT/scripts/generate-kernel-params.sh" \
+       "$BUILD_DIR/airootfs/usr/local/bin/" 2>/dev/null || true
+    cp "$PROJECT_ROOT/scripts/install-kernel-optimizations.sh" \
+       "$BUILD_DIR/airootfs/usr/local/bin/" 2>/dev/null || true
 
     chmod +x "$BUILD_DIR/airootfs/usr/local/bin/"*.sh
+
+    # Copy kernel configuration files for reference
+    log "Installing kernel configuration files..."
+    mkdir -p "$BUILD_DIR/airootfs/usr/share/kutu/kernel"
+    cp "$PROJECT_ROOT/configs/kernel/"* \
+       "$BUILD_DIR/airootfs/usr/share/kutu/kernel/" 2>/dev/null || true
 
     # Copy branding
     log "Installing branding..."

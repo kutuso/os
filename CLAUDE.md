@@ -4,7 +4,7 @@ This repository contains a fully functional Arch-based Linux distribution optimi
 
 ## 🎯 Project Overview
 
-**kutu OS** is a custom Arch Linux distribution that provides a turnkey environment for running ML models locally. Everything is optimized for 24/7 inference workloads and includes all necessary software pre-installed in the ISO.
+**kutu OS** is a custom Arch Linux distribution optimized for 24/7 ML inference workloads. Built using archiso, it provides an installable system with GPU drivers, kernel optimizations, and ML software pre-configured.
 
 ## 🚀 What Was Built
 
@@ -268,17 +268,32 @@ make test
 sudo make install-usb
 ```
 
-### What You Get
+### Installation Flow
 
-**Boot the ISO and everything is ready:**
-- All GPU drivers auto-detected and installed
-- All ML software pre-installed
-- Optimized for 24/7 inference
-- Beautiful dark theme with pastel accents
-- System monitoring built-in
-
-**Start using immediately:**
+**1. Build the ISO:**
 ```bash
+sudo make build-fat  # Full build with all ML software
+```
+
+**2. Install to System:**
+- Boot from ISO
+- Install kutu OS to disk (manual Arch install or use archinstall)
+- Reboot into installed system
+
+**3. First Boot (Automatic):**
+- Hardware auto-detection runs
+- GPU drivers installed automatically
+- Kernel optimizations applied based on detected hardware
+- System configured for 24/7 inference
+- **Reboot required** to activate kernel parameters
+
+**4. Start Using:**
+After the second reboot, everything is ready:
+
+```bash
+# Validate kernel optimizations
+sudo validate-kernel.sh
+
 # Run LLMs
 ollama run llama3.3
 
@@ -288,8 +303,8 @@ python3 -c "from ultralytics import YOLO; model = YOLO('yolov11n.pt')"
 # Check CUDA
 python3 -c "import torch; print(torch.cuda.is_available())"
 
-# Use LangChain
-python3 -c "import langchain; print('Ready!')"
+# Monitor performance
+monitor-kernel.sh
 ```
 
 ## ⚡ Performance Expectations

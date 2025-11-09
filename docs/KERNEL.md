@@ -37,15 +37,145 @@ Unlike server configurations that chase peak performance, kutu OS prioritizes **
 ### Why These Versions?
 
 **Linux 6.12** marks the inflection point where:
+
 - Intel Xe2 graphics driver reached production status
 - Intel NPU (IVPU) driver matured significantly
 - AMD RDNA 3.5 support stabilized
 - PREEMPT_RT merged into mainline
 
 **Linux 6.14+** for AMD provides:
+
 - Improved RDNA 3.5 compute performance
 - Better firmware support
 - Enhanced memory management
+
+## Stock Kernel vs Custom Kernel
+
+kutu OS by default uses the **stock Arch Linux kernel** with optimized boot parameters and runtime configuration. Many optimizations work without kernel recompilation:
+
+### ✅ Available with Stock Kernel + Boot Parameters + sysctl
+
+**Achieves ~80-90% of potential performance improvements:**
+
+- CPU isolation (nohz_full, isolcpus, irqaffinity)
+- IRQ threading (threadirqs)
+- Transparent Huge Pages (THP mode selection)
+- NUMA emulation (numa=fake=N)
+- Security mitigation toggles
+- NVMe and storage optimizations
+- Network parameters (BBR usually available)
+- Memory management tunables (swappiness, compaction, etc.)
+- GPU driver parameters (AMD/Intel specific)
+- Power management controls
+
+**Stock Arch kernel already includes** (as of 6.12+):
+
+- CONFIG_PREEMPT=y in some cases (check with `zgrep PREEMPT /proc/config.gz`)
+- CONFIG_HZ=1000 or 300 (usually sufficient)
+- Most GPU drivers (amdgpu, i915, xe, nvidia)
+- NUMA support
+- Transparent Huge Pages
+- BBR congestion control
+- IOMMU support
+
+### ❌ Requires Custom Kernel Compilation
+
+**Adds final 10-20% optimization for production workloads:**
+
+- **CONFIG_HZ_1000** if not already enabled
+- **CONFIG_PREEMPT** if stock uses PREEMPT_VOLUNTARY or PREEMPT_NONE
+- **CONFIG_NO_HZ_FULL** (tickless on specific CPUs)
+- **CONFIG_NUMA_EMU** (NUMA emulation, may not be in stock kernel)
+- **Disabling debug options** (reduces overhead by 1-5%)
+- **CPU-specific optimizations** (CONFIG_MZEN4, CONFIG_MALDERLAKE)
+- **Link-time optimization** (CONFIG_LTO_CLANG_THIN)
+
+### Recommendation
+
+**Start with stock kernel** for 99% of use cases. Only compile custom kernel if:
+
+1. Latency testing shows >100μs worst-case (CONFIG_PREEMPT needed)
+2. Profiling indicates specific CONFIG options are missing
+3. You're building production infrastructure requiring every optimization
+4. You want to experiment with PREEMPT_RT for hard real-time
+
+**To check your current kernel config:**
+
+```bash
+zgrep CONFIG_PREEMPT /proc/config.gz
+zgrep CONFIG_HZ /proc/config.gz
+```
+
+## How Kernel Optimizations Are Applied
+
+### Installation Flow
+
+1. Build ISO and install to disk
+2. First boot: Automatic hardware detection and GRUB configuration
+3. Reboot: Kernel parameters activate
+
+### Automatic Configuration (First Boot)
+
+After installation, `first-boot-setup.sh` automatically:
+
+1. Detects CPU count and GPU vendor
+2. Generates hardware-specific kernel parameters
+3. Updates `/etc/default/grub`
+4. Regenerates GRUB configuration
+5. Prompts for reboot
+
+```bash
+# Validate after reboot
+sudo validate-kernel.sh
+
+# Monitor performance
+monitor-kernel.sh
+```
+
+### Manual Application (Advanced)
+
+If first-boot setup didn't run or you want to re-apply:
+
+```bash
+# Interactive mode (prompts for reboot)
+sudo install-kernel-optimizations.sh
+
+# Non-interactive mode (called by first-boot-setup)
+sudo install-kernel-optimizations.sh --non-interactive
+```
+
+**Manual configuration:**
+
+```bash
+# 1. Edit GRUB configuration
+sudo nano /etc/default/grub
+
+# 2. Update GRUB_CMDLINE_LINUX_DEFAULT
+# Copy parameters from /usr/share/kutu/kernel/cmdline
+# Add hardware-specific params from cmdline.amd or cmdline.intel
+
+# 3. Regenerate GRUB config
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+# 4. Reboot
+sudo reboot
+```
+
+### Validation
+
+After applying optimizations:
+
+```bash
+# Comprehensive validation
+sudo validate-kernel.sh
+
+# Real-time monitoring
+monitor-kernel.sh
+
+# Latency testing (requires rt-tests package)
+sudo pacman -S rt-tests
+cyclictest -p 95 -m -n -i 1000 -l 100000 -a 1-31
+```
 
 ## Configuration Files
 
@@ -62,6 +192,7 @@ make olddefconfig
 ```
 
 **Key sections**:
+
 - Hardware Support (DRM, GPU drivers, NPU)
 - Memory Management (huge pages, HMM, NUMA)
 - Low Latency (preemption, tickless, IRQ threading)
@@ -151,11 +282,13 @@ kernel.numa_balancing_scan_size_mb=256
 Why not `always`? The `always` mode causes multi-millisecond stalls during compaction. With `madvise`, only memory regions explicitly marked by ML frameworks get promoted to huge pages.
 
 **Benefits**:
+
 - 512x reduction in TLB entries (4KB → 2MB pages)
 - Eliminates address translation overhead
 - Critical for multi-GB model weights
 
 **Configuration**:
+
 ```bash
 # Kernel cmdline
 transparent_hugepage=madvise
@@ -170,11 +303,13 @@ echo madvise > /sys/kernel/mm/transparent_hugepage/defrag
 **Enabled even on single-socket systems** via `numa=fake=4`
 
 **Benefits**:
+
 - Partitions memory for better cache locality
 - Enables testing of NUMA-aware applications
 - Can improve performance by reducing cross-die memory access
 
 **Configuration**:
+
 ```bash
 # Kernel config
 CONFIG_NUMA=y
@@ -411,6 +546,7 @@ sudo ./scripts/validate-kernel.sh
 ```
 
 **Validates**:
+
 - Kernel version (6.12+)
 - Preemption model (CONFIG_PREEMPT)
 - Timer frequency (1000 Hz)
@@ -422,6 +558,7 @@ sudo ./scripts/validate-kernel.sh
 - Thermal (temperatures, throttling)
 
 **Exit codes**:
+
 - 0: All checks passed
 - 1: Critical failures detected
 
@@ -436,6 +573,7 @@ Real-time performance monitoring:
 ```
 
 **Displays**:
+
 - CPU frequencies, temperatures, load
 - Memory usage, huge pages, swap
 - GPU temperature, utilization, memory
@@ -476,6 +614,7 @@ watch -n1 'sensors && cat /proc/cpuinfo | grep MHz'
 ```
 
 **Decision points**:
+
 - Temps <80°C: Keep turbo boost enabled
 - Temps 80-90°C: Consider disabling turbo
 - Temps >90°C: Disable turbo, check cooling
@@ -485,12 +624,14 @@ watch -n1 'sensors && cat /proc/cpuinfo | grep MHz'
 ### Compared to Stock Arch Linux
 
 **Inference Performance**:
+
 - 10-15% lower latency
 - 10-20% higher throughput (tokens/second)
 - 5-10% better GPU utilization
 - 15-25% faster NVMe I/O
 
 **Consistency**:
+
 - More predictable latency (reduced variance)
 - Sustained performance without throttling
 - Better multi-model concurrency
@@ -498,6 +639,7 @@ watch -n1 'sensors && cat /proc/cpuinfo | grep MHz'
 ### Power Consumption (24/7 Operation)
 
 **Expected ranges** for mini PC:
+
 - Idle: 20-35W
 - Light inference: 35-60W
 - Peak inference: 60-90W
@@ -586,6 +728,7 @@ cyclictest -p 95 -m -n -i 1000 -l 10000 -a 1
 **Symptom**: `ENOMEM` despite available memory
 
 **Causes**:
+
 - Memory fragmentation preventing huge page allocation
 - Insufficient `vm.min_free_kbytes`
 
@@ -648,6 +791,7 @@ watch -n1 'grep MHz /proc/cpuinfo'
 **Solutions**:
 
 1. **Disable turbo boost**:
+
    ```bash
    # Intel
    echo 0 | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo
