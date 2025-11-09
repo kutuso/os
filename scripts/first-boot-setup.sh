@@ -68,7 +68,6 @@ systemctl enable --now NetworkManager
 systemctl enable --now sshd
 systemctl enable --now docker
 systemctl enable --now avahi-daemon
-systemctl enable --now sddm
 
 # Setup mDNS hostname
 log "Configuring mDNS hostname (kutu.local)..."

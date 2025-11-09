@@ -18,7 +18,6 @@ systemd-sysvcompat
 
 ### Networking ###
 networkmanager
-network-manager-applet
 avahi
 nss-mdns
 openssh
@@ -63,38 +62,6 @@ git
 ### Hardware Monitoring ###
 lm_sensors
 hddtemp
-
-### Display Server ###
-xorg-server
-xorg-xinit
-xorg-apps
-wayland
-weston
-
-### Desktop Environment (KDE Plasma) ###
-plasma-meta
-plasma-desktop
-plasma-workspace
-kde-applications-meta
-sddm
-konsole
-dolphin
-kate
-
-### Fonts ###
-ttf-dejavu
-ttf-liberation
-noto-fonts
-noto-fonts-emoji
-ttf-hack
-ttf-fira-code
-
-### Audio ###
-pipewire
-pipewire-alsa
-pipewire-pulse
-pipewire-jack
-wireplumber
 
 ### Graphics Libraries ###
 mesa

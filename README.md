@@ -29,14 +29,6 @@ kutu OS is a custom Arch Linux distribution designed from the ground up to provi
 - **Networking**: High-performance stack, mDNS auto-discovery
 - **Power**: Optimized for sustained 24/7 operation
 
-### 🎨 The Bling
-
-- Custom desktop environment (KDE Plasma/GNOME - TBD)
-- kutu branding and theme
-- System monitoring widgets showing GPU/CPU/Memory
-- Boot splash and animations
-- Custom terminal theme
-
 ### 🔧 System Software
 
 - **Container Runtime**: Docker pre-installed
@@ -60,8 +52,7 @@ kutu-os/
 ├── configs/              # System configuration files
 │   ├── kernel/           # Kernel config and patches
 │   ├── drivers/          # Driver installation configs
-│   ├── systemd/          # Systemd unit files
-│   └── desktop/          # Desktop environment configs
+│   └── systemd/          # Systemd unit files
 ├── scripts/              # Build and installation scripts
 │   ├── build.sh          # Main build script
 │   ├── drivers/          # Driver installation scripts
@@ -166,17 +157,13 @@ sudo dd if=out/kutu-os-*.iso of=/dev/sdX bs=4M status=progress
 2. **Kernel**: Custom kernel with inference optimizations
 3. **Init (systemd)**: Parallel service startup
 4. **Driver Loading**: Automatic GPU driver detection and loading
-5. **Display Manager**: Auto-login to kutu user
-6. **Desktop Environment**: Launch with system monitor
-
 ### Key Components
 
 - **Kernel**: Linux 6.12+ with custom config
 - **Init**: systemd with custom units
 - **Package Manager**: pacman with custom repos
-- **Display Server**: Wayland/X11
-- **Desktop**: KDE Plasma or GNOME
 - **GPU Drivers**: Pre-compiled and configured
+- **Headless**: Console-only, optimized for remote access
 
 ## Configuration
 
@@ -226,12 +213,6 @@ Add files to `archiso/airootfs/` matching the root filesystem structure:
 archiso/airootfs/etc/myconfig.conf  -> /etc/myconfig.conf
 ```
 
-### Branding
-
-- Logos: `configs/desktop/branding/`
-- Themes: `configs/desktop/themes/`
-- Wallpapers: `configs/desktop/wallpapers/`
-
 ## Testing
 
 ```bash
@@ -246,10 +227,10 @@ archiso/airootfs/etc/myconfig.conf  -> /etc/myconfig.conf
 
 - Kernel optimizations for specific hardware
 - Driver automation and detection
-- Desktop environment customization
 - Boot time optimization
 - Power management tuning
 - Security hardening
+- Monitoring and alerting tools
 
 ## License
 

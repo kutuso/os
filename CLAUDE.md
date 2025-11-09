@@ -64,22 +64,7 @@ Complete auto-detection and installation scripts:
 
 Scripts: `scripts/drivers/install-{nvidia,amd,intel}.sh`
 
-### 4. Desktop Environment
-- **KDE Plasma** with custom kutu branding
-- **Dark Theme** with pastel rainbow accents
-  - KutuDark color scheme
-  - Konsole terminal theme
-  - GTK3/GTK4 themes
-  - System monitor widgets with color-coded graphs
-
-- **Branding Assets**
-  - Logo: Diagonal pastel rainbow stripes
-  - 4 wallpapers: default, stripes, gradient, minimal
-  - All in beautiful SVG format
-
-- **SDDM** display manager with Wayland/X11 support
-
-### 5. ML Software (Pre-installed in build-fat)
+### 4. ML Software (Pre-installed in build-fat)
 
 **Base ML Stack:**
 - PyTorch with CUDA 12.1
@@ -122,7 +107,7 @@ Scripts: `scripts/drivers/install-{nvidia,amd,intel}.sh`
 - Outlines (constrained output)
 - AutoGPTQ, AutoAWQ (quantization)
 
-### 6. Build System
+### 5. Build System
 
 **Makefile with comprehensive targets:**
 ```bash
@@ -144,13 +129,13 @@ make help               # Show all commands
 - `scripts/test-qemu.sh` - QEMU testing
 - `scripts/first-boot-setup.sh` - First boot automation
 
-### 7. Networking
+### 6. Networking
 - **mDNS/Avahi** for `kutu.local` auto-discovery
 - **NetworkManager** for automatic network configuration
 - **SSH** enabled by default
 - **Firewall (ufw)** pre-configured
 
-### 8. Documentation
+### 7. Documentation
 
 Complete documentation suite:
 - **README.md** - Main overview and quick start
@@ -190,10 +175,6 @@ kutu-os/
 │   │   ├── sysctl.d/         # Runtime sysctl parameters
 │   │   ├── system.conf.d/    # systemd limits
 │   │   └── udev.d/           # udev rules
-│   ├── desktop/               # Desktop environment
-│   │   ├── branding/         # Logo and icons
-│   │   ├── themes/           # Color schemes
-│   │   └── wallpapers/       # Background images
 │   ├── drivers/               # Driver configs
 │   └── network/               # Network configs
 ├── scripts/                    # Scripts
@@ -220,30 +201,6 @@ kutu-os/
 ├── .gitignore                 # Git ignore rules
 └── CLAUDE.md                  # This file
 ```
-
-## 🎨 Visual Design
-
-**Color Palette - Pastel Rainbow:**
-- Pink: `#FFB3BA`
-- Peach: `#FFDFBA`
-- Yellow: `#FFFFBA`
-- Green: `#BAFFC9`
-- Blue: `#BAE1FF` (primary)
-- Purple: `#D4BAFF`
-- Magenta: `#FFB3E6`
-
-**Dark Theme Base:**
-- Background: `#181825`
-- Background Alt: `#1e1e2e`
-- Foreground: `#cdd6f4`
-
-**System Monitors Color-Coded:**
-- CPU: Blue
-- GPU: Green
-- Memory: Pink
-- Network Up: Purple
-- Network Down: Peach
-- Disk: Yellow
 
 ## 🚀 Quick Start
 
@@ -411,12 +368,11 @@ sudo make build-fat
 - ✅ Development libraries
 
 ### User Experience
-- ✅ Beautiful dark theme
-- ✅ Pastel rainbow accents
-- ✅ Color-coded system monitors
-- ✅ Custom branding and wallpapers
+- ✅ Headless server optimized for remote access
+- ✅ SSH enabled by default
 - ✅ mDNS auto-discovery (kutu.local)
 - ✅ One-command builds
+- ✅ Comprehensive CLI monitoring tools
 
 ## 🛠️ Development Status
 
@@ -424,7 +380,7 @@ sudo make build-fat
 - Build system and automation
 - Kernel and system optimizations
 - GPU driver auto-detection
-- Desktop environment and themes
+- Headless server configuration
 - ML software integration
 - Documentation
 - All major features
@@ -459,15 +415,15 @@ sudo make build-fat
 - 10-30% performance gain critical
 - Users can re-enable if needed
 
-**Why dark theme with pastels?**
-- Reduces eye strain for 24/7 monitoring
-- Pastel colors easier to distinguish
-- Modern aesthetic
-- Matches kutu branding
+**Why headless by default?**
+- Reduces resource overhead (more RAM/CPU for ML workloads)
+- Better suited for remote/SSH access
+- Simpler to maintain and troubleshoot
+- Standard practice for server deployments
 
 ### Build Process Flow
 
-1. **prepare_build_env()** - Copy configs, scripts, themes
+1. **prepare_build_env()** - Copy configs and scripts
 2. **install_ml_software()** - Install all Python packages (if --with-software)
 3. **build_iso()** - Run mkarchiso to create ISO
 4. **show_results()** - Display build info
@@ -479,7 +435,7 @@ sudo make build-fat
 3. GPU auto-detection runs
 4. Appropriate drivers installed
 5. System optimizations applied
-6. Desktop environment launches
+6. SSH and services start
 7. First-boot marker created
 8. System ready!
 

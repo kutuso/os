@@ -93,11 +93,6 @@ prepare_build_env() {
     cp "$PROJECT_ROOT/configs/systemd/udev.d/"*.rules \
        "$BUILD_DIR/airootfs/etc/udev/rules.d/" 2>/dev/null || true
 
-    # Desktop configs
-    mkdir -p "$BUILD_DIR/airootfs/etc/sddm.conf.d"
-    cp "$PROJECT_ROOT/configs/desktop/sddm.conf" \
-       "$BUILD_DIR/airootfs/etc/sddm.conf.d/kutu.conf" 2>/dev/null || true
-
     # Network configs
     cp "$PROJECT_ROOT/configs/network/nsswitch.conf" \
        "$BUILD_DIR/airootfs/etc/nsswitch.conf" 2>/dev/null || true
@@ -131,27 +126,6 @@ prepare_build_env() {
     mkdir -p "$BUILD_DIR/airootfs/usr/share/kutu/kernel"
     cp "$PROJECT_ROOT/configs/kernel/"* \
        "$BUILD_DIR/airootfs/usr/share/kutu/kernel/" 2>/dev/null || true
-
-    # Copy branding
-    log "Installing branding..."
-    mkdir -p "$BUILD_DIR/airootfs/usr/share/pixmaps"
-    cp "$PROJECT_ROOT/configs/desktop/branding/"*.svg \
-       "$BUILD_DIR/airootfs/usr/share/pixmaps/" 2>/dev/null || true
-
-    # Copy themes
-    log "Installing themes..."
-    mkdir -p "$BUILD_DIR/airootfs/usr/share/color-schemes"
-    cp "$PROJECT_ROOT/configs/desktop/themes/"*.colors \
-       "$BUILD_DIR/airootfs/usr/share/color-schemes/" 2>/dev/null || true
-
-    mkdir -p "$BUILD_DIR/airootfs/usr/share/konsole"
-    cp "$PROJECT_ROOT/configs/desktop/themes/"*.colorscheme \
-       "$BUILD_DIR/airootfs/usr/share/konsole/" 2>/dev/null || true
-
-    # Copy wallpapers
-    mkdir -p "$BUILD_DIR/airootfs/usr/share/wallpapers"
-    cp "$PROJECT_ROOT/configs/desktop/wallpapers/"*.svg \
-       "$BUILD_DIR/airootfs/usr/share/wallpapers/" 2>/dev/null || true
 
     # Copy documentation
     log "Installing documentation..."
