@@ -1,0 +1,36 @@
+# kutu OS Kernel Parameters - AMD Strix Halo / RDNA Optimized
+# Additional parameters for AMD systems
+# These are appended to the base cmdline by first-boot-setup.sh
+
+# AMD GPU - Graphics Translation Table (128GB unified memory)
+amdgpu.gttsize=131072
+ttm.pages_limit=33554432
+
+# AMD IOMMU for GPU memory access
+amd_iommu=on
+iommu=pt
+
+# GPU Scheduling
+amdgpu.sched_policy=0
+amdgpu.cwsr_enable=1
+amdgpu.mcbp=-1
+amdgpu.lockup_timeout=10000,60000,10000,10000
+
+# Dynamic Power Management
+amdgpu.dpm=1
+
+# Enable all power play features
+amdgpu.ppfeaturemask=0xffffffff
+
+# AMD P-State (CPPC) for Zen 2+
+amd_pstate=active
+initcall_blacklist=acpi_cpufreq_init
+
+# C-state management for balanced latency/power
+# Use max_cstate=2 for C1/C1E (low latency, moderate power saving)
+# Use max_cstate=1 for C1 only (lowest latency, higher idle power)
+processor.max_cstate=2
+
+# Optional: Disable turbo boost if thermal throttling occurs
+# Uncomment after testing under sustained load for 1-4 hours
+#amd_pstate=passive

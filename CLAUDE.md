@@ -14,19 +14,47 @@ This repository contains a fully functional Arch-based Linux distribution optimi
   - GRUB and Syslinux bootloader configurations
   - Profile definitions and pacman configuration
 
-### 2. System Optimizations
-- **Kernel Parameters** (`configs/kernel/`)
-  - Low-latency preemption
-  - Huge pages enabled
-  - NVMe optimizations
-  - CPU core isolation (cores 1-15 for inference)
-  - Mitigations disabled for performance
+### 2. Comprehensive Kernel Customization
+- **Kernel Configuration** (`configs/kernel/config-ai-optimized`)
+  - Production-ready for Linux 6.12+ (6.14+ recommended for AMD)
+  - CONFIG_PREEMPT for sub-100μs latency
+  - CONFIG_HZ_1000 for 1ms scheduling granularity
+  - Full DRM/GPU support (AMD RDNA 3.5, Intel Xe2, Intel NPU)
+  - Heterogeneous Memory Management (HMM) for unified GPU memory
+  - NUMA emulation for memory partitioning
+  - IOMMU passthrough mode for performance
+  - Network optimizations (busy polling, BBR)
+  - Minimal debugging overhead
 
-- **System Tuning** (`configs/systemd/`)
-  - sysctl parameters (swappiness=10, network optimizations)
+- **Kernel Parameters** (`configs/kernel/cmdline`, `cmdline.amd`, `cmdline.intel`)
+  - CPU isolation: cores 1-31 for inference, core 0 for system
+  - Tickless operation (nohz_full) on isolated CPUs
+  - IRQ threading and affinity control
+  - Transparent Huge Pages (madvise mode)
+  - NUMA emulation (numa=fake=4) for cache locality
+  - NVMe power saving disabled for consistent latency
+  - Security mitigations disabled (10-30% performance gain)
+  - AMD-specific: 128GB GTT, hardware scheduler, CWSR
+  - Intel-specific: GuC/HuC firmware, render C-states
+  - Full preemption (preempt=full)
+
+- **Runtime Tuning** (`configs/systemd/sysctl.d/`)
+  - Memory: swappiness=10, huge pages, low compaction
+  - Network: BBR congestion control, 16MB buffers, busy polling
+  - Scheduler: Optimized for sustained compute workloads
+  - NUMA balancing parameters
+  - Real-time priority limits
+
+- **System Services** (`configs/systemd/system.conf.d/`)
   - systemd service limits and timeouts
-  - udev rules for I/O schedulers (NVMe, SSD, HDD)
-  - CPU performance governor
+  - CPU affinity (system tasks on core 0)
+  - udev rules for I/O schedulers (NVMe=none, SSD=mq-deadline, HDD=bfq)
+
+- **Validation Tools** (`scripts/validate-kernel.sh`, `scripts/monitor-kernel.sh`)
+  - Comprehensive kernel configuration validation
+  - Real-time performance monitoring
+  - Thermal and throttling detection
+  - GPU, CPU, memory, network statistics
 
 ### 3. GPU Driver Support
 Complete auto-detection and installation scripts:
@@ -129,6 +157,12 @@ Complete documentation suite:
 - **docs/ARCHITECTURE.md** - Technical architecture and design decisions
 - **docs/BUILDING.md** - Detailed build instructions
 - **docs/MAKEFILE.md** - Complete Makefile reference
+- **docs/KERNEL.md** - Comprehensive kernel configuration guide (NEW)
+  - Hardware requirements and kernel versions
+  - Detailed optimization explanations
+  - Hardware-specific tuning (AMD/Intel)
+  - Validation and troubleshooting
+  - Performance expectations
 - **docs/SOFTWARE_CATALOG.md** - Comprehensive ML software catalog (1059 lines)
 - **docs/SOFTWARE_INSTALLATION.md** - Installation and troubleshooting guide
 - **CONTRIBUTING.md** - Contribution guidelines
@@ -147,9 +181,13 @@ kutu-os/
 │   ├── profiledef.sh          # Build profile
 │   └── pacman.conf            # Package manager config
 ├── configs/                    # System configurations
-│   ├── kernel/                # Kernel parameters
+│   ├── kernel/                # Kernel configuration
+│   │   ├── config-ai-optimized  # Full kernel config fragment
+│   │   ├── cmdline            # Common boot parameters
+│   │   ├── cmdline.amd        # AMD-specific parameters
+│   │   └── cmdline.intel      # Intel-specific parameters
 │   ├── systemd/               # System optimizations
-│   │   ├── sysctl.d/         # sysctl parameters
+│   │   ├── sysctl.d/         # Runtime sysctl parameters
 │   │   ├── system.conf.d/    # systemd limits
 │   │   └── udev.d/           # udev rules
 │   ├── desktop/               # Desktop environment
@@ -165,10 +203,13 @@ kutu-os/
 │   ├── build.sh               # Main build script
 │   ├── build-time-install-software.sh  # Build-time software installer
 │   ├── test-qemu.sh          # QEMU testing
-│   └── first-boot-setup.sh   # First boot automation
+│   ├── first-boot-setup.sh   # First boot automation
+│   ├── validate-kernel.sh    # Kernel configuration validation (NEW)
+│   └── monitor-kernel.sh     # Real-time performance monitoring (NEW)
 ├── docs/                       # Documentation
 │   ├── ARCHITECTURE.md
 │   ├── BUILDING.md
+│   ├── KERNEL.md              # Kernel configuration guide (NEW)
 │   ├── MAKEFILE.md
 │   ├── SOFTWARE_CATALOG.md
 │   └── SOFTWARE_INSTALLATION.md
@@ -299,15 +340,44 @@ sudo make build-fat
 
 ## 🎯 Key Features
 
-### OS-Level Optimizations
-- ✅ Custom kernel parameters for sustained compute
-- ✅ CPU core isolation for dedicated inference
-- ✅ Huge pages enabled (2MB)
-- ✅ NVMe optimizations (no power saving)
-- ✅ Network stack tuned (BBR, high buffers)
-- ✅ I/O schedulers optimized per device type
-- ✅ Swappiness reduced to 10
-- ✅ Performance CPU governor
+### Kernel-Level Optimizations
+- ✅ Linux 6.12+ with full AI hardware support
+- ✅ CONFIG_PREEMPT for sub-100μs scheduling latency
+- ✅ CONFIG_HZ_1000 for 1ms scheduling granularity
+- ✅ CPU core isolation (cores 1-31 for inference, 0 for system)
+- ✅ Tickless operation (NO_HZ_FULL) on isolated CPUs
+- ✅ IRQ threading for interrupt control
+- ✅ Transparent Huge Pages (madvise mode) - 512x TLB reduction
+- ✅ NUMA emulation (numa=fake=4) for cache locality
+- ✅ IOMMU passthrough mode for GPU DMA performance
+- ✅ Security mitigations disabled (10-30% performance gain)
+
+### Memory Optimizations
+- ✅ Heterogeneous Memory Management (HMM) for unified GPU memory
+- ✅ AMD: 128GB Graphics Translation Table (GTT)
+- ✅ Low compaction proactiveness (prevents latency spikes)
+- ✅ Swappiness = 10 (strongly prefer RAM)
+- ✅ 1GB minimum free memory buffer
+
+### GPU Optimizations
+- ✅ AMD: Hardware scheduler with over-subscription
+- ✅ AMD: Compute Wave Save/Restore (CWSR) for fairness
+- ✅ AMD: Mid-command buffer preemption (MCBP)
+- ✅ Intel: GuC/HuC firmware scheduling (15-25% lower CPU overhead)
+- ✅ Intel: NPU support via DRM_ACCEL framework
+- ✅ Auto-detection and configuration on first boot
+
+### Network Optimizations
+- ✅ BBR congestion control for high throughput
+- ✅ Busy polling for sub-10μs receive latency
+- ✅ 16MB socket buffers for P2P communication
+- ✅ TCP fast open and tuned keepalives
+
+### Storage Optimizations
+- ✅ NVMe power saving disabled (consistent latency)
+- ✅ I/O schedulers: none (NVMe), mq-deadline (SSD), bfq (HDD)
+- ✅ Increased queue depth (1024 for NVMe)
+- ✅ Optimized read-ahead (8MB NVMe, 2MB SSD)
 
 ### Hardware Support
 - ✅ Auto-detect GPU on first boot
@@ -476,6 +546,11 @@ make check                   # Check system
 make validate                # Validate configs
 make docs                    # View docs
 make help                    # Show all commands
+
+# Kernel Validation (after boot)
+sudo ./scripts/validate-kernel.sh     # Validate kernel configuration
+./scripts/monitor-kernel.sh           # Real-time performance monitoring
+cyclictest -p 95 -m -n -i 1000 -l 10000 -a 1  # Latency testing
 ```
 
 **That's it! kutu OS is ready to build and deploy.** 🌈
