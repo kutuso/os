@@ -1,0 +1,23 @@
+componentName: kutu
+strings:
+  productName: "kutu OS"
+  shortProductName: "kutu"
+  version: "0.1"
+  shortVersion: "0.1"
+  versionedName: "kutu OS 0.1"
+  shortVersionedName: "kutu 0.1"
+  bootloaderEntryName: "kutu OS"
+  productUrl: "https://kutu.so"
+  supportUrl: "https://github.com/kutu-so/os/issues"
+  knownIssuesUrl: "https://github.com/kutu-so/os/issues"
+  releaseNotesUrl: "https://github.com/kutu-so/os/releases"
+images:
+  productLogo: "logo.png"
+  productIcon: "logo.png"
+  productWelcome: "logo.png"
+slideshow: "show.qml"
+style:
+  SidebarBackground: "#181825"
+  SidebarText: "#cdd6f4"
+  SidebarTextHighlight: "#ffb86c"
+  BrandingPlaceholder: "#f0f0f0"

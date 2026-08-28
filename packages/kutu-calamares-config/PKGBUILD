@@ -1,0 +1,14 @@
+pkgname=kutu-calamares-config
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="kutu OS Calamares installer configuration and branding"
+arch=(any)
+url="https://kutu.so"
+license=(MIT CC-BY-SA)
+depends=(calamares)
+package() {
+  mkdir -p "$pkgdir/etc/"
+  cp -r "$startdir/calamares" "$pkgdir/etc/"
+  find "$pkgdir/etc/calamares" -type f -exec chmod 644 {} +
+  install -Dm644 "$startdir/applications/calamares.desktop" -t "$pkgdir/usr/share/applications/"
+}

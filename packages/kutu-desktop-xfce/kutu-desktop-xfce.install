@@ -1,7 +1,7 @@
 post_install() {
-  systemctl --root="$1" enable lightdm.service 2>/dev/null || true
-  systemctl --root="$1" set-default graphical.target 2>/dev/null || true
+  systemctl enable lightdm.service 2>/dev/null || true
+  systemctl set-default graphical.target 2>/dev/null || true
 }
 post_upgrade() {
-  post_install "$1"
+  post_install
 }

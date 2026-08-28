@@ -16,9 +16,9 @@ depends=(exo garcon thunar thunar-volman tumbler xfce4-appfinder xfce4-panel
 install=kutu-desktop-xfce.install
 package() {
   install -Dm644 "$startdir/lightdm/20-kutu.conf" -t "$pkgdir/etc/lightdm/lightdm.conf.d/"
-  install -Dm644 "$startdir/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" \
-                  "$startdir/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" \
-                  -t "$pkgdir/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/"
+  install -Dm644 "$startdir/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" \
+                  "$startdir/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" \
+                  -t "$pkgdir/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/"
   install -Dm644 "$startdir/firefox/mozilla.cfg" -t "$pkgdir/usr/lib/firefox/"
   install -Dm644 "$startdir/firefox/defaults/pref/kutu-autoconfig.js" -t "$pkgdir/usr/lib/firefox/defaults/pref/"
   install -Dm755 "$startdir/usr/lib/kutu/patch-firefox-desktop.sh" -t "$pkgdir/usr/lib/kutu/"

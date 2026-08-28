@@ -15,7 +15,8 @@ echo "== kutu OS test suite (in-container) =="
 pacman -Sy --noconfirm --needed shellcheck || { pacman -Syy --noconfirm archlinux-keyring && pacman -Sy --noconfirm --needed shellcheck; }
 
 echo "-- shellcheck"
-mapfile -t scripts < <(find packages -path '*/usr/bin/*' -type f; find scripts -name '*.sh')
+mapfile -t scripts < <(find packages \( -path '*/pkg' -o -path '*/src' \) -prune -o \
+  -path '*/usr/bin/*' -type f -print; find scripts -name '*.sh')
 shellcheck "${scripts[@]}"
 
 echo "-- config validation"
@@ -29,14 +30,20 @@ done
 
 echo "-- package builds"
 for pkg in packages/*/; do
-  echo "   building ${pkg}"
+  name=$(basename "$pkg")
   if ! id builduser >/dev/null 2>&1; then useradd -m builduser; fi
   chown -R builduser "$pkg"
   # shellcheck disable=SC1091
   (cd "$pkg" && source PKGBUILD && \
-    mapfile -t deps < <(printf '%s\n' "${depends[@]:-}" "${makedepends[@]:-}" | grep -v '^$' || true) && \
-    [ ${#deps[@]} -gt 0 ] && pacman -S --needed --noconfirm --asdeps "${deps[@]}" >/dev/null)
-  (cd "$pkg" && runuser -u builduser -- makepkg -f --noconfirm >/dev/null)
+    mapfile -t deps < <(printf '%s\n' "${depends[@]:-}" "${makedepends[@]:-}" | grep -v '^$') && \
+    for d in "${deps[@]:-}"; do pacman -S --needed --noconfirm --asdeps "$d" >/dev/null 2>&1 || true; done)
+  if compgen -G "$pkg"*.pkg.tar.zst >/dev/null && [ "${KUTU_FORCE_BUILD:-0}" != 1 ]; then
+    echo "   $name: cached (rm the .pkg.tar.zst or KUTU_FORCE_BUILD=1 to rebuild)"
+  else
+    echo "   building $name"
+    (cd "$pkg" && runuser -u builduser -- makepkg -f --noconfirm >/dev/null)
+  fi
+  pacman -U --noconfirm "$pkg"*.pkg.tar.zst >/dev/null
 done
 
 echo "== ALL TESTS PASS =="

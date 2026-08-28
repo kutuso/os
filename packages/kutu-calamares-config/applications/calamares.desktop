@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install kutu OS
+GenericName=System Installer
+Comment=kutu OS installer
+Exec=sudo calamares
+Icon=/usr/share/kutu/branding/kutu-logo.png
+Terminal=false
+StartupNotify=true
+Categories=Qt;System;
