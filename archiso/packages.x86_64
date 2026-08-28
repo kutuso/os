@@ -9,7 +9,9 @@ mkinitcpio
 grub
 efibootmgr
 os-prober
+syslinux
 memtest86+
+memtest86+-efi
 
 systemd
 systemd-sysvcompat

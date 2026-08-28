@@ -5,7 +5,8 @@ cd "$(dirname "$0")/.."
 
 if [ "${KUTU_IN_DOCKER:-0}" != 1 ]; then
   command -v docker >/dev/null 2>&1 || { echo "docker required (or set KUTU_IN_DOCKER=1 inside an arch container)"; exit 1; }
-  exec docker run --rm -v "$PWD:/w" -v kutu-pacman-cache:/var/cache/pacman/pkg \
+  # --privileged: mkarchiso/pacstrap must mount proc/sys/dev into the build chroot
+  exec docker run --rm --privileged -v "$PWD:/w" -v kutu-pacman-cache:/var/cache/pacman/pkg \
     -w /w -e KUTU_IN_DOCKER=1 archlinux:base-devel bash scripts/build.sh
 fi
 
