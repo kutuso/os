@@ -35,4 +35,5 @@ for pkg in packages/*/; do
 done
 
 (cd "$REPO_DIR" && repo-add -R kutu.db.tar.zst ./*.pkg.tar.zst >/dev/null)
-echo "repo ready: $REPO_DIR ($(ls "$REPO_DIR" | grep -c 'pkg.tar.zst$') packages)"
+set -- "$REPO_DIR"/*.pkg.tar.zst
+echo "repo ready: $REPO_DIR ($# packages)"
