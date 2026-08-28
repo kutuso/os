@@ -1,7 +1,7 @@
 # kutu OS Makefile
 # Build system for creating ML-optimized Arch Linux ISO
 
-.PHONY: all build clean test test-qemu install-deps check help validate install-usb docs
+.PHONY: all build clean check help validate install-usb info list
 
 # Default target
 all: build
@@ -32,11 +32,9 @@ help:
 	@echo "$(MAGENTA)  kutu OS Build System$(NC)"
 	@echo "$(CYAN)════════════════════════════════════════════════════════$(NC)"
 	@echo ""
-	@echo "$(GREEN)Build & Test:$(NC)"
-	@echo "  $(YELLOW)make build$(NC)              - Build kutu OS ISO (base system only)"
-	@echo "  $(YELLOW)make build-fat$(NC)          - Build with ALL ML software pre-installed"
+	@echo "$(GREEN)Build:$(NC)"
+	@echo "  $(YELLOW)make build$(NC)              - Build kutu OS ISO"
 	@echo "  $(YELLOW)make clean$(NC)              - Remove build artifacts"
-	@echo "  $(YELLOW)make test$(NC)               - Test ISO in QEMU"
 	@echo "  $(YELLOW)make install-usb$(NC)        - Write ISO to USB (interactive)"
 	@echo ""
 	@echo "$(GREEN)System & Validation:$(NC)"
@@ -44,25 +42,9 @@ help:
 	@echo "  $(YELLOW)make install-deps$(NC)       - Install build dependencies"
 	@echo "  $(YELLOW)make validate$(NC)           - Validate configuration files"
 	@echo ""
-	@echo "$(GREEN)Software Installation:$(NC)"
-	@echo "  $(YELLOW)make install-software$(NC)   - Install ML software (interactive)"
-	@echo ""
-	@echo "$(GREEN)Documentation:$(NC)"
-	@echo "  $(YELLOW)make docs$(NC)               - View documentation"
-	@echo "  $(YELLOW)make info$(NC)               - Show build information"
-	@echo "  $(YELLOW)make help$(NC)               - Show this help"
-	@echo ""
-	@echo "$(CYAN)════════════════════════════════════════════════════════$(NC)"
 	@echo "$(BLUE)Quick Start:$(NC)"
-	@echo "  sudo make build-fat          # Build with ALL software (recommended)"
-	@echo "  make test                    # Test in QEMU"
-	@echo "  sudo make install-usb        # Write to USB"
-	@echo ""
-	@echo "$(BLUE)Alternative:$(NC)"
-	@echo "  sudo make build              # Build base OS only (faster)"
-	@echo ""
-	@echo "$(YELLOW)Note: Build requires sudo/root. build-fat takes 60-90 min.$(NC)"
-	@echo "$(CYAN)════════════════════════════════════════════════════════$(NC)"
+	@echo "  sudo make build            # Build the ISO"
+	@echo "  sudo make install-usb      # Write to USB"
 
 # Check if running as root (for build target)
 check-root:
@@ -149,27 +131,6 @@ build: check-root
 	fi
 	@echo ""
 
-# Build with ALL ML software pre-installed
-build-fat: check-root
-	@echo "$(CYAN)════════════════════════════════════════════════════════$(NC)"
-	@echo "$(MAGENTA)  Building kutu OS (FAT) with ML Software$(NC)"
-	@echo "$(CYAN)════════════════════════════════════════════════════════$(NC)"
-	@echo ""
-	@echo "$(YELLOW)⚠  This will:$(NC)"
-	@echo "  - Take 60-90 minutes to build"
-	@echo "  - Create a 10-15GB ISO file"
-	@echo "  - Install ALL ML software (PyTorch, vLLM, YOLO, etc.)"
-	@echo ""
-	@read -p "Continue? (y/N) " -n 1 -r; \
-	echo; \
-	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		./$(SCRIPTS_DIR)/build.sh --with-software; \
-		echo ""; \
-		echo "$(GREEN)✓ FAT ISO build complete!$(NC)"; \
-	else \
-		echo "$(YELLOW)Cancelled$(NC)"; \
-	fi
-
 # Clean build artifacts
 clean:
 	@echo "$(YELLOW)Cleaning build artifacts...$(NC)"
@@ -187,20 +148,6 @@ distclean: clean
 	@rm -rf $(OUT_DIR)
 	@mkdir -p $(OUT_DIR)
 	@echo "$(GREEN)✓ All artifacts cleaned$(NC)"
-
-# Test in QEMU
-test-qemu: test
-
-test:
-	@echo "$(CYAN)Testing ISO in QEMU...$(NC)"
-	@if [ ! -f "$(ISO_NAME)" ]; then \
-		echo "$(RED)Error: No ISO found in $(OUT_DIR)/$(NC)"; \
-		echo "$(YELLOW)Please build first: sudo make build$(NC)"; \
-		exit 1; \
-	fi
-	@echo "$(BLUE)Launching QEMU with ISO: $(ISO_NAME)$(NC)"
-	@echo ""
-	@./$(SCRIPTS_DIR)/test-qemu.sh
 
 # Interactive USB installation
 install-usb: check-root
@@ -242,28 +189,6 @@ install-usb: check-root
 		echo "$(YELLOW)Cancelled$(NC)"; \
 	fi
 
-# Generate/view documentation
-docs:
-	@echo "$(CYAN)kutu OS Documentation$(NC)"
-	@echo ""
-	@echo "$(BLUE)Available documentation:$(NC)"
-	@echo "  1. $(GREEN)README.md$(NC) - Main overview"
-	@echo "  2. $(GREEN)docs/BUILDING.md$(NC) - Build instructions"
-	@echo "  3. $(GREEN)docs/ARCHITECTURE.md$(NC) - Technical architecture"
-	@echo "  4. $(GREEN)CONTRIBUTING.md$(NC) - Contribution guidelines"
-	@echo ""
-	@read -p "Enter number to view (or press Enter to skip): " choice; \
-	case $$choice in \
-		1) less README.md ;; \
-		2) less $(DOCS_DIR)/BUILDING.md ;; \
-		3) less $(DOCS_DIR)/ARCHITECTURE.md ;; \
-		4) less CONTRIBUTING.md ;; \
-		*) echo "$(YELLOW)Skipped$(NC)" ;; \
-	esac
-
-# Quick build and test
-quick: build test
-
 # Show build info
 info:
 	@echo "$(CYAN)════════════════════════════════════════════════════════$(NC)"
@@ -295,36 +220,6 @@ list:
 		awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print "  " $$1}}' | \
 		grep -v -e '^[^[:alnum:]]' -e '^$@$$' | \
 		sort
-
-# Install ML software (post-installation)
-install-software:
-	@echo "$(CYAN)════════════════════════════════════════════════════════$(NC)"
-	@echo "$(MAGENTA)  Install ML Software$(NC)"
-	@echo "$(CYAN)════════════════════════════════════════════════════════$(NC)"
-	@echo ""
-	@echo "$(YELLOW)This will install ML inference software on the built ISO or running system.$(NC)"
-	@echo ""
-	@./$(SCRIPTS_DIR)/software/install-all.sh
-
-# Install software during build (creates fat ISO with everything)
-build-with-software: check-root
-	@echo "$(CYAN)════════════════════════════════════════════════════════$(NC)"
-	@echo "$(MAGENTA)  Building kutu OS with ML Software$(NC)"
-	@echo "$(CYAN)════════════════════════════════════════════════════════$(NC)"
-	@echo ""
-	@echo "$(YELLOW)This creates a larger ISO with ML software pre-installed.$(NC)"
-	@echo "$(YELLOW)Build time will be significantly longer (30-60 minutes).$(NC)"
-	@echo ""
-	@read -p "Continue? (y/N) " -n 1 -r; \
-	echo; \
-	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		echo "$(BLUE)Not yet implemented. Use post-installation method:$(NC)"; \
-		echo "  1. sudo make build"; \
-		echo "  2. Boot the ISO"; \
-		echo "  3. Run: ./scripts/software/install-all.sh"; \
-	else \
-		echo "$(YELLOW)Cancelled$(NC)"; \
-	fi
 
 # Default when no target specified
 .DEFAULT_GOAL := help
