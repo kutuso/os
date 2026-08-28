@@ -1,0 +1,59 @@
+name: release
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: build ISO (packages + mkarchiso in privileged container)
+        run: ./scripts/build.sh
+      - name: smoke test the ISO in QEMU
+        run: ./scripts/smoke-test.sh
+      - name: collect artifacts
+        run: |
+          mkdir -p release/repo/x86_64
+          cp out/*.iso out/*.sha256 release/
+          cp work/repo/*.pkg.tar.zst work/repo/kutu.db.tar.zst release/repo/x86_64/ 2>/dev/null || cp work/repo/* release/repo/x86_64/
+          (cd release && sha256sum kutu-os-*.iso > SHA256SUMS)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kutu-release
+          path: release/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: kutu-release
+          path: release
+      - name: prepare pages artifact (pacman repo)
+        run: |
+          mkdir -p site/repo
+          cp -r release/repo/x86_64 site/repo/
+          cp release/repo/x86_64/kutu.db.tar.zst site/repo/x86_64/kutu.db 2>/dev/null || true
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4
+      - name: create github release with ISO
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/kutu-os-*.iso
+            release/SHA256SUMS
+          generate_release_notes: true

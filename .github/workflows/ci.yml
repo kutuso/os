@@ -1,0 +1,21 @@
+name: ci
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:base-devel
+    steps:
+      - name: install git
+        run: pacman -Sy --noconfirm git
+      - uses: actions/checkout@v4
+      - name: lint + unit tests + package builds
+        env:
+          KUTU_IN_DOCKER: "1"
+          KUTU_FORCE_BUILD: "1"
+        run: bash scripts/test.sh
