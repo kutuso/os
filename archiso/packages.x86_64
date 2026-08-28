@@ -1,105 +1,41 @@
-# kutu OS Package List
-# Base system packages for Arch Linux
+# kutu OS package list
+# Live ISO + installer payload; the XFCE desktop arrives via kutu-desktop-xfce deps.
 
-### Core System ###
 base
-base-devel
 linux
+linux-lts
 linux-firmware
-linux-headers
 mkinitcpio
 grub
 efibootmgr
 os-prober
+memtest86+
 
-### Boot and Init ###
 systemd
 systemd-sysvcompat
-
-### Networking ###
 networkmanager
-avahi
-nss-mdns
 openssh
-wget
-curl
-rsync
 
-### File Systems ###
 dosfstools
-ntfs-3g
-exfat-utils
+e2fsprogs
 btrfs-progs
 xfsprogs
-e2fsprogs
-
-### Storage Optimizations ###
+ntfs-3g
+exfatprogs
 nvme-cli
 smartmontools
-hdparm
-fstrim
+lm_sensors
+usbutils
+pciutils
+lshw
 
-### Compression ###
-zip
-unzip
-p7zip
-xz
-zstd
-
-### System Tools ###
 htop
 btop
-iotop
-iftop
-nethogs
 ncdu
-tmux
-screen
-vim
 nano
-git
-
-### Hardware Monitoring ###
-lm_sensors
-hddtemp
-
-### Graphics Libraries ###
-mesa
-vulkan-tools
-vulkan-icd-loader
-
-### Container Runtime ###
-docker
-docker-compose
-containerd
-
-### Development Tools ###
-gcc
-clang
-cmake
-make
-git
-python
-python-pip
-python-virtualenv
-rust
-go
-
-### Build Tools ###
-autoconf
-automake
-pkgconf
-patch
-fakeroot
-
-### Monitoring Tools ###
-htop
-nvtop
-iotop
-sysstat
-dstat
-
-### Utilities ###
+vim
+sudo
+less
 man-db
 man-pages
 bash-completion
@@ -107,53 +43,32 @@ tree
 wget
 curl
 rsync
-sudo
-which
-less
-
-### Archive Support ###
-zip
-unzip
+jq
 tar
 gzip
 bzip2
 xz
-
-### System Information ###
-neofetch
-lshw
-dmidecode
-usbutils
-pciutils
-
-### Text Processing ###
-sed
-awk
-grep
-jq
-
-### Performance Tools ###
-perf
-strace
-ltrace
-
-### Security ###
-ufw
-fail2ban
-apparmor
-
-### Power Management ###
-cpupower
-thermald
-tlp
-
-### Additional CLI Tools ###
+zstd
+zip
+unzip
+p7zip
 fzf
 ripgrep
 fd
 bat
-exa
-
-### Misc ###
+eza
 reflector
 pacman-contrib
+
+thermald
+tlp
+
+mesa
+vulkan-icd-loader
+
+calamares
+kutu-keyring
+kutu-base
+kutu-memory
+kutu-desktop-xfce
+kutu-calamares-config
