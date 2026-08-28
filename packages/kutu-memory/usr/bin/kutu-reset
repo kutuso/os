@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "== kutu-reset: reverting kutu memory tuning to Arch defaults =="
+systemctl disable --now kutu-damon.service kutu-mglru.service 2>/dev/null || true
+/usr/bin/kutu-damon stop 2>/dev/null || true
+sysctl -w vm.swappiness=60 vm.page-cluster=3 vm.watermark_scale_factor=10 \
+  vm.watermark_boost_factor=15000 vm.dirty_background_ratio=10 vm.dirty_ratio=20 >/dev/null
+install -Dm644 /dev/null /etc/sysctl.d/70-kutu-disabled.conf
+cat > /etc/sysctl.d/70-kutu-disabled.conf <<'EOF'
+vm.swappiness = 60
+vm.page-cluster = 3
+vm.watermark_scale_factor = 10
+vm.watermark_boost_factor = 15000
+vm.dirty_background_ratio = 10
+vm.dirty_ratio = 20
+EOF
+[ -e /sys/kernel/mm/lru_gen/enabled ] && printf '%s' 0 > /sys/kernel/mm/lru_gen/enabled
+[ -e /sys/module/zswap/parameters/enabled ] && printf '%s' N > /sys/module/zswap/parameters/enabled
+if [ -f /etc/default/grub.d/99-kutu-memory.cfg ]; then
+  mv /etc/default/grub.d/99-kutu-memory.cfg /etc/default/grub.d/99-kutu-memory.cfg.disabled
+  grub-mkconfig -o /boot/grub/grub.cfg 2>/dev/null || echo "note: grub-mkconfig failed; cmdline reverts on next grub-mkconfig"
+  echo "note: kutu-memory package upgrades will restore the grub snippet; re-run kutu-reset after upgrades"
+fi
+echo "kutu-reset: done. Reboot for full effect. Undo: rm /etc/sysctl.d/70-kutu-disabled.conf && systemctl enable --now kutu-mglru kutu-damon"
