@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+set -euo pipefail
+DAMON_ROOT="${KUTU_DAMON_SYSFS:-/sys/kernel/mm/damon/admin}"
+MEMINFO="${KUTU_MEMINFO:-/proc/meminfo}"
+IOMEM="${KUTU_IOMEM:-/proc/iomem}"
+KD="$DAMON_ROOT/kdamonds/0"
+CTX="$KD/contexts/0"
+
+start() {
+  if [ ! -d "$DAMON_ROOT" ]; then
+    echo "kutu-damon: DAMON sysfs unavailable; skipping (kernel without CONFIG_DAMON_SYSFS)"
+    exit 0
+  fi
+  printf '%s' 0 > "$DAMON_ROOT/nr_kdamonds" 2>/dev/null || true
+  printf '%s' 1 > "$DAMON_ROOT/nr_kdamonds"
+  printf '%s' 1 > "$KD/contexts/nr_contexts"
+  printf '%s' paddr > "$CTX/operations"
+  printf '%s' 5000    > "$CTX/monitoring_attrs/intervals/sample_us"
+  printf '%s' 100000  > "$CTX/monitoring_attrs/intervals/aggr_us"
+  printf '%s' 1000000 > "$CTX/monitoring_attrs/intervals/update_us"
+
+  mapfile -t ranges < <(
+    if [ -r "$IOMEM" ] && grep -q 'System RAM' "$IOMEM" 2>/dev/null; then
+      grep 'System RAM' "$IOMEM" | head -8 | \
+        awk '{gsub(/:/,"",$1); split($1,a,"-"); printf "0x%s 0x%s\n", a[1], a[2]}'
+    else
+      awk '/MemTotal/ {printf "0x0 0x%x\n", $2*1024 - 1}' "$MEMINFO"
+    fi
+  )
+  printf '%s' 1 > "$CTX/targets/nr_targets"
+  printf '%s' "${#ranges[@]}" > "$CTX/targets/0/nr_regions"
+  local i=0 r start end
+  for r in "${ranges[@]}"; do
+    read -r start end <<< "$r"
+    printf '%s' "$(( start ))" > "$CTX/targets/0/regions/$i/start"
+    printf '%s' "$(( end + 1 ))" > "$CTX/targets/0/regions/$i/end"
+    i=$(( i + 1 ))
+  done
+
+  printf '%s' 1 > "$CTX/schemes/nr_schemes"
+  local S="$CTX/schemes/0"
+  printf '%s' pageout > "$S/action"
+  printf '%s' 0 > "$S/access_pattern/nr_accesses/min"
+  printf '%s' 0 > "$S/access_pattern/nr_accesses/max"
+  printf '%s' 100 > "$S/access_pattern/age/min"
+  printf '%s' 4294967295 > "$S/access_pattern/age/max"
+  printf '%s' 100 > "$S/quotas/ms"
+  printf '%s' 0 > "$S/quotas/bytes"
+  printf '%s' 1000 > "$S/quotas/reset_interval_ms"
+  printf '%s' free_mem_rate > "$S/watermarks/metric"
+  printf '%s' 1000000 > "$S/watermarks/interval_us"
+  printf '%s' 50  > "$S/watermarks/low"
+  printf '%s' 100 > "$S/watermarks/mid"
+  printf '%s' 150 > "$S/watermarks/high"
+  printf '%s' on > "$KD/state"
+  echo "kutu-damon: DAMON proactive reclaim started"
+}
+
+stop() {
+  [ -d "$DAMON_ROOT" ] || exit 0
+  printf '%s' off > "$KD/state" 2>/dev/null || true
+  printf '%s' 0 > "$DAMON_ROOT/nr_kdamonds" 2>/dev/null || true
+  echo "kutu-damon: stopped"
+}
+
+status() {
+  [ -d "$DAMON_ROOT" ] && cat "$KD/state" 2>/dev/null || echo "unsupported"
+}
+
+case "${1:-}" in
+  start) start ;;
+  stop) stop ;;
+  status) status ;;
+  *) echo "usage: kutu-damon {start|stop|status}" >&2; exit 2 ;;
+esac

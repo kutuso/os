@@ -1,0 +1,13 @@
+[Unit]
+Description=kutu OS DAMON proactive reclaim
+After=multi-user.target
+ConditionPathExists=/sys/kernel/mm/damon/admin
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/kutu-damon start
+ExecStop=/usr/bin/kutu-damon stop
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

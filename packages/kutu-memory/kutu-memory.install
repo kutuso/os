@@ -1,5 +1,5 @@
 post_install() {
-  systemctl --root="$1" enable kutu-mglru.service 2>/dev/null || true
+  systemctl --root="$1" enable kutu-mglru.service kutu-damon.service 2>/dev/null || true
 }
 post_upgrade() {
   post_install "$1"
