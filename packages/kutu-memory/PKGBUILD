@@ -1,0 +1,17 @@
+pkgname=kutu-memory
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="kutu OS Tier-0 memory stack: zswap, MGLRU, journald, I/O scheduler tuning"
+arch=(any)
+url="https://kutu.so"
+license=(MIT)
+depends=(systemd grub)
+install=kutu-memory.install
+package() {
+  install -Dm644 "$startdir/sysctl/60-kutu-memory.conf" -t "$pkgdir/etc/sysctl.d/"
+  install -Dm644 "$startdir/grub/99-kutu-memory.cfg" -t "$pkgdir/etc/default/grub.d/"
+  install -Dm755 "$startdir/usr/bin/kutu-mglru-init" -t "$pkgdir/usr/bin/"
+  install -Dm644 "$startdir/systemd/kutu-mglru.service" -t "$pkgdir/usr/lib/systemd/system/"
+  install -Dm644 "$startdir/journald/99-kutu.conf" -t "$pkgdir/etc/systemd/journald.conf.d/"
+  install -Dm644 "$startdir/udev/60-kutu-ioschedulers.rules" -t "$pkgdir/usr/lib/udev/rules.d/"
+}

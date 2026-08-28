@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+SYS="${KUTU_SYSFS:-/sys}"
+L="$SYS/kernel/mm/lru_gen"
+[ -e "$L/enabled" ] || { echo "kutu-mglru: lru_gen not available, skipping"; exit 0; }
+printf '%s' "0x0007" > "$L/enabled"
+[ -e "$L/min_ttl_ms" ] && printf '%s' "1000" > "$L/min_ttl_ms"
+echo "kutu-mglru: MGLRU enabled (0x0007), min_ttl_ms=1000"
