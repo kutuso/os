@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = firefox
+Target = kutu-desktop-xfce
+
+[Action]
+Description = Wrapping Firefox desktop launcher with kutu-run
+When = PostTransaction
+Exec = /usr/lib/kutu/patch-firefox-desktop.sh

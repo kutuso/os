@@ -1,0 +1,32 @@
+pkgname=kutu-desktop-xfce
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="kutu OS XFCE desktop: curated, themed, memory-wrapped"
+arch=(any)
+url="https://kutu.so"
+license=(MIT CC-BY-SA)
+depends=(exo garcon thunar thunar-volman tumbler xfce4-appfinder xfce4-panel
+         xfce4-session xfce4-settings xfconf xfdesktop xfwm4
+         xfce4-terminal xfce4-power-manager xfce4-screensaver xfce4-screenshooter
+         xfce4-pulseaudio-plugin gvfs xdg-user-dirs mousepad ristretto
+         lightdm lightdm-gtk-greeter network-manager-applet blueman
+         pipewire wireplumber pipewire-audio pipewire-pulse pavucontrol
+         firefox adwaita-icon-theme
+         noto-fonts ttf-dejavu librsvg)
+install=kutu-desktop-xfce.install
+package() {
+  install -Dm644 "$startdir/lightdm/20-kutu.conf" -t "$pkgdir/etc/lightdm/lightdm.conf.d/"
+  install -Dm644 "$startdir/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" \
+                  "$startdir/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" \
+                  -t "$pkgdir/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/"
+  install -Dm644 "$startdir/firefox/mozilla.cfg" -t "$pkgdir/usr/lib/firefox/"
+  install -Dm644 "$startdir/firefox/defaults/pref/kutu-autoconfig.js" -t "$pkgdir/usr/lib/firefox/defaults/pref/"
+  install -Dm755 "$startdir/usr/lib/kutu/patch-firefox-desktop.sh" -t "$pkgdir/usr/lib/kutu/"
+  install -Dm644 "$startdir/alpm-hooks/60-kutu-firefox-wrap.hook" -t "$pkgdir/usr/share/libalpm/hooks/"
+  mkdir -p "$pkgdir/usr/share/themes/"
+  cp -r "$startdir/branding/themes/KutuDark" "$pkgdir/usr/share/themes/"
+  chmod -R u+rwX,go+rX "$pkgdir/usr/share/themes/KutuDark"
+  install -Dm644 "$startdir"/branding/wallpapers/*.svg -t "$pkgdir/usr/share/kutu/wallpapers/"
+  install -Dm644 "$startdir"/branding/branding/kutu-logo.png -t "$pkgdir/usr/share/kutu/branding/"
+  install -Dm644 "$startdir"/branding/branding/kutu-logo.svg -t "$pkgdir/usr/share/kutu/branding/"
+}
