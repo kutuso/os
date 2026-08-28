@@ -46,3 +46,8 @@ Thumbs.db
 # makepkg build dirs
 pkg/
 src/
+
+# makepkg downloaded sources
+*.tar.gz
+*.tar.xz
+*.tar.zst
