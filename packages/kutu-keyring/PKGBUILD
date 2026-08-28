@@ -1,0 +1,17 @@
+pkgname=kutu-keyring
+pkgver=20260828
+pkgrel=1
+pkgdesc="kutu OS pacman keyring"
+arch=(any)
+url="https://kutu.so"
+license=(MIT)
+install=kutu-keyring.install
+package() {
+  install -Dm644 "$startdir/keyrings/kutu.gpg" -t "$pkgdir/usr/share/pacman/keyrings/"
+  install -Dm644 "$startdir/keyrings/kutu-trusted" -t "$pkgdir/usr/share/pacman/keyrings/"
+  if [ -f "$startdir/keyrings/kutu-revoked" ]; then
+    install -Dm644 "$startdir/keyrings/kutu-revoked" -t "$pkgdir/usr/share/pacman/keyrings/"
+  else
+    : > "$pkgdir/usr/share/pacman/keyrings/kutu-revoked"
+  fi
+}

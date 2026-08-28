@@ -1,0 +1,7 @@
+post_install() {
+  if [ -s /usr/share/pacman/keyrings/kutu.gpg ]; then
+    pacman-key --populate kutu 2>/dev/null || true
+  else
+    echo "kutu-keyring: no signing key shipped yet (development); repo SigLevel stays permissive"
+  fi
+}
