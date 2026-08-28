@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = linux
+Target = linux-lts
+
+[Action]
+Description = Checking kernel features for kutu OS memory stack
+When = PostTransaction
+Exec = /usr/bin/kutu-check-kernel

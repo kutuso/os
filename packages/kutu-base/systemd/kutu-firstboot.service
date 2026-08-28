@@ -1,0 +1,11 @@
+[Unit]
+Description=kutu OS first-boot calibration
+After=multi-user.target
+ConditionPathExists=!/var/lib/kutu/firstboot-done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/kutu-firstboot
+
+[Install]
+WantedBy=multi-user.target

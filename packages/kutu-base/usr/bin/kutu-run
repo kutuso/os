@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+DRY=0
+[ "${1:-}" = "--dry-run" ] && { DRY=1; shift; }
+[ $# -ge 2 ] || { echo "usage: kutu-run [--dry-run] <profile> <command...>" >&2; exit 2; }
+PROFILE="$1"; shift
+CONF="${KUTU_ROOT:-}/etc/kutu/apps.d/${PROFILE}.conf"
+DECL=()
+if [ -r "$CONF" ]; then
+  # shellcheck disable=SC1090
+  . "$CONF"
+  if [ -n "${KUTU_MEMORY_HIGH_PCT:-}" ]; then
+    TOTAL_KB=$(awk '/MemTotal/ {print $2}' "${KUTU_MEMINFO:-/proc/meminfo}")
+    DECL+=(-p "MemoryHigh=$(( TOTAL_KB * KUTU_MEMORY_HIGH_PCT * 1024 / 100 ))")
+  fi
+  [ -n "${KUTU_MEMORY_SWAP_MAX:-}" ] && DECL+=(-p "MemorySwapMax=${KUTU_MEMORY_SWAP_MAX}")
+  [ -n "${KUTU_CPU_WEIGHT:-}" ] && DECL+=(-p "CPUWeight=${KUTU_CPU_WEIGHT}")
+  [ "${KUTU_MEMORY_MERGE:-0}" = "1" ] && DECL+=(-p "MemoryMerge=yes")
+fi
+CMD=(systemd-run --user --scope --unit="app-${PROFILE}-%n" "${DECL[@]+"${DECL[@]}"}" "$@")
+if [ "$DRY" = 1 ]; then printf '%q ' "${CMD[@]}"; echo; exit 0; fi
+exec "${CMD[@]}"

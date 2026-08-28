@@ -1,0 +1,17 @@
+pkgname=kutu-base
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="kutu OS base: identity, first-boot calibration, app launcher wrapper, kernel feature prober"
+arch=(any)
+url="https://kutu.so"
+license=(MIT)
+depends=(systemd bash)
+install=kutu-base.install
+package() {
+  install -Dm755 "$startdir/usr/bin/kutu-run" "$startdir/usr/bin/kutu-firstboot" "$startdir/usr/bin/kutu-check-kernel" -t "$pkgdir/usr/bin/"
+  install -Dm644 "$startdir/systemd/kutu-firstboot.service" -t "$pkgdir/usr/lib/systemd/system/"
+  install -Dm644 "$startdir/etc/os-release" -t "$pkgdir/etc/"
+  install -Dm644 "$startdir/etc/kutu/memory.conf" -t "$pkgdir/etc/kutu/"
+  install -Dm644 "$startdir/preset/80-kutu.preset" -t "$pkgdir/usr/lib/systemd/system-preset/"
+  install -Dm644 "$startdir/alpm-hooks/kutu-check-kernel.hook" -t "$pkgdir/usr/share/libalpm/hooks/"
+}

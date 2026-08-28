@@ -1,0 +1,3 @@
+post_install() {
+  systemctl --root="$1" enable kutu-firstboot.service 2>/dev/null || true
+}

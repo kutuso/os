@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -uo pipefail
+SYS="${KUTU_SYSFS:-/sys}"; PROC="${KUTU_PROC:-/proc}"
+fail=0
+chk() {
+  local name="$1" ok="$2" detail="$3"
+  if [ "$ok" = 1 ]; then printf 'PASS %-22s %s\n' "$name" "$detail"
+  else printf 'FAIL %-22s %s\n' "$name" "$detail"; fail=1; fi
+}
+zswap_enabled=$(cat "$SYS/module/zswap/parameters/enabled" 2>/dev/null || echo N)
+chk zswap "$([ "$zswap_enabled" = Y ] && echo 1 || echo 0)" "enabled=$zswap_enabled"
+chk zswap-compressor "$([ "$(cat "$SYS/module/zswap/parameters/compressor" 2>/dev/null)" = zstd ] && echo 1 || echo 0)" \
+  "want zstd got $(cat "$SYS/module/zswap/parameters/compressor" 2>/dev/null)"
+chk zswap-zpool "$([ "$(cat "$SYS/module/zswap/parameters/zpool" 2>/dev/null)" = zsmalloc ] && echo 1 || echo 0)" \
+  "want zsmalloc got $(cat "$SYS/module/zswap/parameters/zpool" 2>/dev/null)"
+chk zswap-shrinker "$([ "$(cat "$SYS/module/zswap/parameters/shrinker_enabled" 2>/dev/null)" = Y ] && echo 1 || echo 0)" \
+  "shrinker=$(cat "$SYS/module/zswap/parameters/shrinker_enabled" 2>/dev/null)"
+mglru=$(cat "$SYS/kernel/mm/lru_gen/enabled" 2>/dev/null | tr -d 'x' || echo 0)
+chk mglru "$(( mglru & 7 ))" "enabled=$mglru want 7"
+chk damon-sysfs "$([ -d "$SYS/kernel/mm/damon/admin" ] && echo 1 || echo 0)" "presence of sysfs interface"
+chk psi "$([ -e "$PROC/pressure/memory" ] && echo 1 || echo 0)" "presence of /proc/pressure/memory"
+chk per-cgroup-zswap "$([ -e "$SYS/fs/cgroup/memory.zswap.max" ] && echo 1 || echo 0)" "memory.zswap.max on root cgroup"
+thp=$(cat "$SYS/kernel/mm/transparent_hugepage/enabled" 2>/dev/null)
+chk thp-madvise "$(grep -q '\[madvise\]' <<< "$thp" && echo 1 || echo 0)" "got ${thp:-none}"
+exit $fail
