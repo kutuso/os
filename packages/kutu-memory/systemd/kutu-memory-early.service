@@ -1,12 +1,11 @@
 [Unit]
-Description=kutu OS MGLRU activation
+Description=kutu OS early memory stack activation (zswap zpool, MGLRU)
 After=systemd-modules-load.service
 Before=multi-user.target
-ConditionPathExists=/sys/kernel/mm/lru_gen/enabled
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/kutu-mglru-init
+ExecStart=/usr/bin/kutu-memory-early
 RemainAfterExit=yes
 
 [Install]

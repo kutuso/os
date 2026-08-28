@@ -6,6 +6,9 @@ set -euo pipefail
 
 useradd -m -G wheel -s /bin/bash kutu
 passwd -d kutu
+# Arch's lightdm PAM requires autologin group membership for autologin
+groupadd -r autologin 2>/dev/null || true
+usermod -aG autologin kutu
 
 sed -i 's/^#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
 locale-gen

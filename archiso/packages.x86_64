@@ -2,6 +2,8 @@
 # Live ISO + installer payload; the XFCE desktop arrives via kutu-desktop-xfce deps.
 
 base
+mkinitcpio
+mkinitcpio-archiso
 linux
 linux-lts
 linux-firmware

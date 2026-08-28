@@ -11,15 +11,17 @@ zswap_enabled=$(cat "$SYS/module/zswap/parameters/enabled" 2>/dev/null || echo N
 chk zswap "$([ "$zswap_enabled" = Y ] && echo 1 || echo 0)" "enabled=$zswap_enabled"
 chk zswap-compressor "$([ "$(cat "$SYS/module/zswap/parameters/compressor" 2>/dev/null)" = zstd ] && echo 1 || echo 0)" \
   "want zstd got $(cat "$SYS/module/zswap/parameters/compressor" 2>/dev/null)"
-chk zswap-zpool "$([ "$(cat "$SYS/module/zswap/parameters/zpool" 2>/dev/null)" = zsmalloc ] && echo 1 || echo 0)" \
-  "want zsmalloc got $(cat "$SYS/module/zswap/parameters/zpool" 2>/dev/null)"
+chk zswap-zpool "$([ ! -e "$SYS/module/zswap/parameters/zpool" ] || [ "$(cat "$SYS/module/zswap/parameters/zpool" 2>/dev/null)" = zsmalloc ] && echo 1 || echo 0)" \
+  "zsmalloc default (param absent on kernels >= 6.10) or explicit; got $(cat "$SYS/module/zswap/parameters/zpool" 2>/dev/null || echo none)"
 chk zswap-shrinker "$([ "$(cat "$SYS/module/zswap/parameters/shrinker_enabled" 2>/dev/null)" = Y ] && echo 1 || echo 0)" \
   "shrinker=$(cat "$SYS/module/zswap/parameters/shrinker_enabled" 2>/dev/null)"
-mglru=$(cat "$SYS/kernel/mm/lru_gen/enabled" 2>/dev/null | tr -d 'x' || echo 0)
-chk mglru "$(( mglru & 7 ))" "enabled=$mglru want 7"
+mglru=$(cat "$SYS/kernel/mm/lru_gen/enabled" 2>/dev/null || echo 0)
+mglru_bits=$(( (mglru + 0) & 7 ))
+if [ "$mglru_bits" = 7 ]; then chk mglru 1 "enabled=$mglru want 7"
+else chk mglru 0 "enabled=$mglru want 7"; fi
 chk damon-sysfs "$([ -d "$SYS/kernel/mm/damon/admin" ] && echo 1 || echo 0)" "presence of sysfs interface"
 chk psi "$([ -e "$PROC/pressure/memory" ] && echo 1 || echo 0)" "presence of /proc/pressure/memory"
-chk per-cgroup-zswap "$([ -e "$SYS/fs/cgroup/memory.zswap.max" ] && echo 1 || echo 0)" "memory.zswap.max on root cgroup"
+chk per-cgroup-zswap "$([ -e "$SYS/fs/cgroup/system.slice/memory.zswap.max" ] && echo 1 || echo 0)" "memory.zswap.max on system.slice (root cgroup never exposes it)"
 thp=$(cat "$SYS/kernel/mm/transparent_hugepage/enabled" 2>/dev/null)
 chk thp-madvise "$(grep -q '\[madvise\]' <<< "$thp" && echo 1 || echo 0)" "got ${thp:-none}"
 exit $fail

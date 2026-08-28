@@ -1,5 +1,5 @@
 post_install() {
-  systemctl enable kutu-mglru.service kutu-damon.service systemd-oomd.service 2>/dev/null || true
+  systemctl enable kutu-memory-early.service kutu-damon.service systemd-oomd.service 2>/dev/null || true
 }
 post_upgrade() {
   post_install

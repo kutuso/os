@@ -12,6 +12,9 @@ fi
 
 REPO_DIR="work/repo"
 mkdir -p "$REPO_DIR"
+# never let our own packages linger in the shared pacman cache: same-name
+# rebuilds would collide with stale copies and fail checksum validation
+rm -f /var/cache/pacman/pkg/kutu-*.pkg.tar.zst /var/cache/pacman/pkg/calamares-*.pkg.tar.zst
 pacman -Sy --noconfirm >/dev/null 2>&1 || true
 if ! id builduser >/dev/null 2>&1; then useradd -m builduser; fi
 

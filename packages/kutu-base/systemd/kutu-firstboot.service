@@ -6,6 +6,7 @@ ConditionPathExists=!/var/lib/kutu/firstboot-done
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/kutu-firstboot
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target

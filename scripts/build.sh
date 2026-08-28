@@ -16,7 +16,7 @@ mkdir -p out
 ./scripts/build-packages.sh
 
 PROFILE_TMP="work/profile"
-rm -rf "$PROFILE_TMP"
+rm -rf work/profile work/chroot
 cp -r archiso "$PROFILE_TMP"
 sed -i "s|file://KUTU_REPO_PLACEHOLDER|file://$PWD/work/repo|" "$PROFILE_TMP/pacman.conf"
 

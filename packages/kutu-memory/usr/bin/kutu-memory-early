@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+SYS="${KUTU_SYSFS:-/sys}"
+
+# zswap zpool: kernels < 6.10 expose a zpool param that cannot reference
+# modular zsmalloc from cmdline (params parse before modules load), so set it
+# here. Kernels >= 6.10 removed the param entirely: zsmalloc is the baked-in
+# default and there is nothing to do.
+if [ -e "$SYS/module/zswap/parameters/zpool" ] && [ "$(cat "$SYS/module/zswap/parameters/zpool" 2>/dev/null)" != "zsmalloc" ]; then
+  modprobe zsmalloc 2>/dev/null || true
+  printf '%s' zsmalloc > "$SYS/module/zswap/parameters/zpool" 2>/dev/null || true
+fi
+
+# MGLRU: enable aging + page-table walks + bloom filters; protect the working
+# set for at least 1s (anti-thrash).
+L="$SYS/kernel/mm/lru_gen"
+if [ -e "$L/enabled" ]; then
+  printf '%s' "0x0007" > "$L/enabled"
+  [ -e "$L/min_ttl_ms" ] && printf '%s' "1000" > "$L/min_ttl_ms"
+fi
+echo "kutu-memory-early: zpool=$(cat "$SYS/module/zswap/parameters/zpool" 2>/dev/null) mglru=$(cat "$L/enabled" 2>/dev/null)"

@@ -11,8 +11,9 @@ start() {
     echo "kutu-damon: DAMON sysfs unavailable; skipping (kernel without CONFIG_DAMON_SYSFS)"
     exit 0
   fi
-  printf '%s' 0 > "$DAMON_ROOT/nr_kdamonds" 2>/dev/null || true
-  printf '%s' 1 > "$DAMON_ROOT/nr_kdamonds"
+  KDS="$DAMON_ROOT/kdamonds"
+  printf '%s' 0 > "$KDS/nr_kdamonds" 2>/dev/null || true
+  printf '%s' 1 > "$KDS/nr_kdamonds"
   printf '%s' 1 > "$KD/contexts/nr_contexts"
   printf '%s' paddr > "$CTX/operations"
   printf '%s' 5000    > "$CTX/monitoring_attrs/intervals/sample_us"
@@ -28,7 +29,7 @@ start() {
     fi
   )
   printf '%s' 1 > "$CTX/targets/nr_targets"
-  printf '%s' "${#ranges[@]}" > "$CTX/targets/0/nr_regions"
+  printf '%s' "${#ranges[@]}" > "$CTX/targets/0/regions/nr_regions"
   local i=0 r start end
   for r in "${ranges[@]}"; do
     read -r start end <<< "$r"
@@ -59,7 +60,7 @@ start() {
 stop() {
   [ -d "$DAMON_ROOT" ] || exit 0
   printf '%s' off > "$KD/state" 2>/dev/null || true
-  printf '%s' 0 > "$DAMON_ROOT/nr_kdamonds" 2>/dev/null || true
+  printf '%s' 0 > "$DAMON_ROOT/kdamonds/nr_kdamonds" 2>/dev/null || true
   echo "kutu-damon: stopped"
 }
 
