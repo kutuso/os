@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- kutu OS wallpaper: pastel tiles drifting out of the dark -->
+<svg width="3840" height="2160" viewBox="0 0 3840 2160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#11111b"/>
+      <stop offset="100%" stop-color="#181825"/>
+    </linearGradient>
+    <linearGradient id="t1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFB3BA"/>
+      <stop offset="100%" stop-color="#FFDFBA"/>
+    </linearGradient>
+    <linearGradient id="t2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFBA"/>
+      <stop offset="100%" stop-color="#BAFFC9"/>
+    </linearGradient>
+    <linearGradient id="t3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#BAFFC9"/>
+      <stop offset="100%" stop-color="#BAE1FF"/>
+    </linearGradient>
+    <linearGradient id="t4" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#BAE1FF"/>
+      <stop offset="100%" stop-color="#D4BAFF"/>
+    </linearGradient>
+    <linearGradient id="t5" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#D4BAFF"/>
+      <stop offset="100%" stop-color="#FFB3E6"/>
+    </linearGradient>
+    <linearGradient id="t6" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFB3E6"/>
+      <stop offset="100%" stop-color="#FFB3BA"/>
+    </linearGradient>
+    <filter id="grain" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.07"/></feComponentTransfer>
+    </filter>
+    <filter id="far" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+  </defs>
+
+  <rect width="3840" height="2160" fill="url(#sky)"/>
+
+  <g filter="url(#far)" opacity="0.4">
+    <rect x="160" y="1500" width="360" height="360" rx="52" fill="url(#t2)" transform="rotate(-18 340 1680)"/>
+    <rect x="2960" y="240" width="330" height="330" rx="48" fill="url(#t5)" transform="rotate(22 3125 405)"/>
+    <rect x="700" y="340" width="300" height="300" rx="44" fill="url(#t4)" transform="rotate(-12 850 490)"/>
+    <rect x="3300" y="1480" width="280" height="280" rx="40" fill="url(#t1)" transform="rotate(-24 3440 1620)"/>
+  </g>
+
+  <g opacity="0.92">
+    <rect x="1180" y="760" width="520" height="520" rx="64" fill="url(#t1)" transform="rotate(-14 1440 1020)"/>
+    <rect x="2050" y="360" width="460" height="460" rx="60" fill="url(#t3)" transform="rotate(16 2280 590)"/>
+    <rect x="2360" y="1180" width="420" height="420" rx="56" fill="url(#t4)" transform="rotate(-10 2570 1390)"/>
+    <rect x="620" y="1180" width="360" height="360" rx="52" fill="url(#t6)" transform="rotate(20 800 1360)"/>
+    <rect x="3020" y="780" width="330" height="330" rx="48" fill="url(#t2)" transform="rotate(-8 3185 945)"/>
+    <rect x="1520" y="1520" width="300" height="300" rx="44" fill="url(#t5)" transform="rotate(12 1670 1670)"/>
+    <rect x="340" y="480" width="260" height="260" rx="40" fill="url(#t3)" transform="rotate(-22 470 610)"/>
+    <rect x="3400" y="1860" width="240" height="240" rx="36" fill="url(#t6)" transform="rotate(18 3520 1980)"/>
+    <rect x="980" y="1660" width="220" height="220" rx="32" fill="url(#t4)" transform="rotate(-16 1090 1770)"/>
+    <rect x="2820" y="1640" width="200" height="200" rx="32" fill="url(#t1)" transform="rotate(10 2920 1740)"/>
+    <rect x="1900" y="1120" width="180" height="180" rx="28" fill="url(#t2)" transform="rotate(24 1990 1210)"/>
+    <rect x="1420" y="240" width="170" height="170" rx="26" fill="url(#t5)" transform="rotate(-6 1505 325)"/>
+    <rect x="2640" y="1700" width="150" height="150" rx="24" fill="url(#t3)" transform="rotate(-20 2715 1775)"/>
+  </g>
+
+  <rect width="3840" height="2160" filter="url(#grain)"/>
+</svg>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- kutu OS wallpaper: soft-focus bokeh of the pastel spectrum -->
+<svg width="3840" height="2160" viewBox="0 0 3840 2160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#11111b"/>
+      <stop offset="60%" stop-color="#181825"/>
+      <stop offset="100%" stop-color="#1e1e2e"/>
+    </linearGradient>
+    <radialGradient id="d1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFB3BA" stop-opacity="0.75"/>
+      <stop offset="70%" stop-color="#FFB3BA" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#FFB3BA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="d2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFDFBA" stop-opacity="0.7"/>
+      <stop offset="70%" stop-color="#FFDFBA" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#FFDFBA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="d3" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFBA" stop-opacity="0.65"/>
+      <stop offset="70%" stop-color="#FFFFBA" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#FFFFBA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="d4" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#BAFFC9" stop-opacity="0.7"/>
+      <stop offset="70%" stop-color="#BAFFC9" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#BAFFC9" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="d5" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#BAE1FF" stop-opacity="0.8"/>
+      <stop offset="70%" stop-color="#BAE1FF" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#BAE1FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="d6" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#D4BAFF" stop-opacity="0.75"/>
+      <stop offset="70%" stop-color="#D4BAFF" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#D4BAFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="d7" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFB3E6" stop-opacity="0.7"/>
+      <stop offset="70%" stop-color="#FFB3E6" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#FFB3E6" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.07"/></feComponentTransfer>
+    </filter>
+  </defs>
+
+  <rect width="3840" height="2160" fill="url(#sky)"/>
+
+  <circle cx="2960" cy="520" r="360" fill="url(#d5)"/>
+  <circle cx="3480" cy="1220" r="290" fill="url(#d6)"/>
+  <circle cx="2320" cy="880" r="210" fill="url(#d7)"/>
+  <circle cx="3660" cy="420" r="150" fill="url(#d3)"/>
+  <circle cx="2820" cy="1620" r="240" fill="url(#d1)"/>
+  <circle cx="3380" cy="1880" r="180" fill="url(#d4)"/>
+  <circle cx="2160" cy="1820" r="130" fill="url(#d2)"/>
+  <circle cx="2580" cy="1460" r="120" fill="url(#d6)"/>
+  <circle cx="3120" cy="1060" r="90" fill="url(#d3)"/>
+  <circle cx="3620" cy="760" r="70" fill="url(#d1)"/>
+  <circle cx="2420" cy="560" r="60" fill="url(#d4)"/>
+  <circle cx="2760" cy="320" r="52" fill="url(#d2)"/>
+  <circle cx="3260" cy="1600" r="56" fill="url(#d7)"/>
+  <circle cx="3580" cy="1620" r="44" fill="url(#d5)"/>
+  <circle cx="2280" cy="1240" r="46" fill="url(#d5)"/>
+  <circle cx="2980" cy="1980" r="66" fill="url(#d3)"/>
+  <circle cx="2620" cy="1980" r="40" fill="url(#d1)"/>
+  <circle cx="3420" cy="80" r="58" fill="url(#d4)"/>
+  <circle cx="2040" cy="80" r="42" fill="url(#d6)"/>
+  <circle cx="3800" cy="1060" r="38" fill="url(#d2)"/>
+  <circle cx="2060" cy="360" r="34" fill="url(#d5)"/>
+  <circle cx="3820" cy="320" r="30" fill="url(#d7)"/>
+  <circle cx="2200" cy="1620" r="30" fill="url(#d3)"/>
+
+  <rect width="3840" height="2160" filter="url(#grain)"/>
+</svg>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- kutu OS wallpaper: layered horizon, glow lines on dark water -->
+<svg width="3840" height="2160" viewBox="0 0 3840 2160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#11111b"/>
+      <stop offset="60%" stop-color="#181825"/>
+      <stop offset="100%" stop-color="#1e1e2e"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFB3E6" stop-opacity="0.4"/>
+      <stop offset="55%" stop-color="#D4BAFF" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#11111b" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.08"/></feComponentTransfer>
+    </filter>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+
+  <rect width="3840" height="2160" fill="url(#sky)"/>
+  <ellipse cx="1920" cy="1240" rx="1300" ry="700" fill="url(#sun)"/>
+
+  <path d="M0 1330 Q 960 1240, 1920 1330 T 3840 1330 L3840 2160 L0 2160 z" fill="#1e1e2e" opacity="0.6"/>
+  <path d="M0 1330 Q 960 1240, 1920 1330 T 3840 1330" stroke="#FFB3E6" stroke-width="7" fill="none" opacity="0.85"/>
+  <g filter="url(#glow)" opacity="0.6">
+    <path d="M0 1330 Q 960 1240, 1920 1330 T 3840 1330" stroke="#FFB3E6" stroke-width="18" fill="none"/>
+  </g>
+
+  <path d="M0 1480 Q 760 1390, 1520 1480 T 3040 1480 T 4560 1480 L4560 2160 L0 2160 z" fill="#181825"/>
+  <path d="M0 1480 Q 760 1390, 1520 1480 T 3040 1480 T 4560 1480" stroke="#BAE1FF" stroke-width="6" fill="none" opacity="0.8"/>
+  <g filter="url(#glow)" opacity="0.55">
+    <path d="M0 1480 Q 760 1390, 1520 1480 T 3040 1480 T 4560 1480" stroke="#BAE1FF" stroke-width="16" fill="none"/>
+  </g>
+
+  <path d="M0 1640 Q 960 1550, 1920 1640 T 3840 1640 L3840 2160 L0 2160 z" fill="#141420" opacity="0.9"/>
+  <path d="M0 1640 Q 960 1550, 1920 1640 T 3840 1640" stroke="#BAFFC9" stroke-width="5" fill="none" opacity="0.75"/>
+  <g filter="url(#glow)" opacity="0.45">
+    <path d="M0 1640 Q 960 1550, 1920 1640 T 3840 1640" stroke="#BAFFC9" stroke-width="14" fill="none"/>
+  </g>
+
+  <path d="M0 1810 Q 640 1740, 1280 1810 T 2560 1810 T 3840 1810 L3840 2160 L0 2160 z" fill="#11111b"/>
+  <path d="M0 1810 Q 640 1740, 1280 1810 T 2560 1810 T 3840 1810" stroke="#FFDFBA" stroke-width="4" fill="none" opacity="0.65"/>
+  <path d="M0 1980 Q 960 1920, 1920 1980 T 3840 1980 L3840 2160 L0 2160 z" fill="#0d0d14"/>
+  <path d="M0 1980 Q 960 1920, 1920 1980 T 3840 1980" stroke="#FFB3BA" stroke-width="3" fill="none" opacity="0.5"/>
+
+  <rect width="3840" height="2160" filter="url(#grain)"/>
+</svg>

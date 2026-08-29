@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- kutu OS wallpaper: aurora glows drifting over a deep field -->
+<svg width="3840" height="2160" viewBox="0 0 3840 2160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#11111b"/>
+      <stop offset="55%" stop-color="#181825"/>
+      <stop offset="100%" stop-color="#1e1e2e"/>
+    </linearGradient>
+    <radialGradient id="glow-p" cx="22%" cy="78%" r="48%">
+      <stop offset="0%" stop-color="#D4BAFF" stop-opacity="0.5"/>
+      <stop offset="45%" stop-color="#BAE1FF" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#11111b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow-b" cx="76%" cy="22%" r="44%">
+      <stop offset="0%" stop-color="#BAE1FF" stop-opacity="0.42"/>
+      <stop offset="50%" stop-color="#BAFFC9" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#11111b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow-g" cx="88%" cy="82%" r="38%">
+      <stop offset="0%" stop-color="#BAFFC9" stop-opacity="0.34"/>
+      <stop offset="100%" stop-color="#11111b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow-m" cx="46%" cy="40%" r="34%">
+      <stop offset="0%" stop-color="#FFB3E6" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#11111b" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="sweep" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FFB3BA" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#FFB3E6" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#BAE1FF" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="vig" cx="50%" cy="46%" r="72%">
+      <stop offset="0%" stop-color="#11111b" stop-opacity="0"/>
+      <stop offset="78%" stop-color="#11111b" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#11111b" stop-opacity="0.55"/>
+    </radialGradient>
+    <filter id="grain" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.08"/></feComponentTransfer>
+    </filter>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="90"/>
+    </filter>
+  </defs>
+
+  <rect width="3840" height="2160" fill="url(#sky)"/>
+  <rect width="3840" height="2160" fill="url(#glow-p)"/>
+  <rect width="3840" height="2160" fill="url(#glow-b)"/>
+  <rect width="3840" height="2160" fill="url(#glow-g)"/>
+  <rect width="3840" height="2160" fill="url(#glow-m)"/>
+  <g filter="url(#soft)">
+    <path d="M-200 1560 Q 900 1160, 1900 1480 T 4040 1380 L 4040 1560 Q 2900 1760, 1900 1560 T -200 1660 z" fill="url(#sweep)"/>
+  </g>
+  <rect width="3840" height="2160" fill="url(#vig)"/>
+  <rect width="3840" height="2160" filter="url(#grain)"/>
+</svg>

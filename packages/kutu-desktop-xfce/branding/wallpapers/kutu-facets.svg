@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- kutu OS wallpaper: a crystal of facets catching pastel light -->
+<svg width="3840" height="2160" viewBox="0 0 3840 2160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#11111b"/>
+      <stop offset="100%" stop-color="#181825"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#D4BAFF" stop-opacity="0.35"/>
+      <stop offset="55%" stop-color="#BAE1FF" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#11111b" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="f1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#BAE1FF" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#181825" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="f2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#D4BAFF" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#1e1e2e" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="f3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FFB3E6" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#313244" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="f4" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#BAFFC9" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#181825" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="f5" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFBA" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#1e1e2e" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="f6" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFDFBA" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#181825" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="f7" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFB3BA" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#11111b" stop-opacity="0.9"/>
+    </linearGradient>
+    <filter id="grain" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.07"/></feComponentTransfer>
+    </filter>
+  </defs>
+
+  <rect width="3840" height="2160" fill="url(#sky)"/>
+  <ellipse cx="1920" cy="1080" rx="1500" ry="1100" fill="url(#halo)"/>
+
+  <g stroke="#BAE1FF" stroke-width="3" stroke-opacity="0.35" stroke-linejoin="round">
+    <polygon points="1920,340 2520,760 2280,1080" fill="url(#f1)"/>
+    <polygon points="1920,340 2280,1080 1920,1180 1560,760" fill="url(#f2)"/>
+    <polygon points="1920,340 1560,760 1320,1080" fill="url(#f7)"/>
+    <polygon points="1320,1080 1560,760 1920,1180 1420,1420" fill="url(#f5)"/>
+    <polygon points="2520,760 2280,1080 2440,1480" fill="url(#f3)"/>
+    <polygon points="2280,1080 2440,1480 1920,1180" fill="url(#f4)"/>
+    <polygon points="1420,1420 1920,1180 2260,1700 1700,1860" fill="url(#f6)"/>
+    <polygon points="2440,1480 2260,1700 1920,1180" fill="url(#f2)"/>
+    <polygon points="1920,1180 2260,1700 1700,1860 1320,1420" fill="url(#f3)"/>
+    <polygon points="1700,1860 2260,1700 2180,1960 1720,1980" fill="url(#f1)"/>
+    <polygon points="1320,1080 1420,1420 1180,1560 980,1240" fill="url(#f5)"/>
+    <polygon points="2520,760 2760,980 2440,1480" fill="url(#f7)"/>
+    <polygon points="2760,980 2580,1560 2440,1480" fill="url(#f4)"/>
+    <polygon points="980,1240 1180,1560 1000,1700 820,1360" fill="url(#f2)"/>
+    <polygon points="820,1360 1000,1700 1240,1840 1060,1500" fill="url(#f3)"/>
+  </g>
+
+  <rect width="3840" height="2160" filter="url(#grain)"/>
+</svg>
