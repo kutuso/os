@@ -16,19 +16,19 @@ pacman -Sy --noconfirm --needed shellcheck || { pacman -Syy --noconfirm archlinu
 
 echo "-- shellcheck"
 mapfile -t scripts < <(find packages \( -path '*/pkg' -o -path '*/src' \) -prune -o \
-  -path '*/usr/bin/*' -type f -print; find scripts -name '*.sh')
+  \( -path '*/usr/bin/*' -o -path '*/usr/lib/*' \) -type f -print; find scripts -name '*.sh')
 shellcheck "${scripts[@]}"
 
 echo "-- config validation"
 ./scripts/validate-configs.sh
+
+echo "-- package builds"
+./scripts/build-packages.sh
 
 echo "-- unit tests"
 for t in tests/*-test.sh; do
   echo "   $t"
   "$t"
 done
-
-echo "-- package builds"
-./scripts/build-packages.sh
 
 echo "== ALL TESTS PASS =="

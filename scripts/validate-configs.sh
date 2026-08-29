@@ -16,6 +16,6 @@ while IFS= read -r unit; do
   systemd-analyze verify --man=no "$unit" 2>&1 | grep -Ev 'Failed to lookup|is not executable' || true
 done < <(find packages \( -path '*/pkg' -o -path '*/src' \) -prune -o -name '*.service' -print)
 
-mapfile -t scripts < <(find packages \( -path '*/pkg' -o -path '*/src' \) -prune -o -path '*/usr/bin/*' -type f -print; find scripts -name '*.sh')
+mapfile -t scripts < <(find packages \( -path '*/pkg' -o -path '*/src' \) -prune -o \( -path '*/usr/bin/*' -o -path '*/usr/lib/*' \) -type f -print; find scripts -name '*.sh')
 shellcheck "${scripts[@]}"
 echo "validate-configs: OK"
