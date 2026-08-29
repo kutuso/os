@@ -1,0 +1,8 @@
+- [Home](/)
+- [Memory stack](/docs/MEMORY.md)
+- [Building](/docs/BUILDING.md)
+- [Architecture](/docs/ARCHITECTURE.md)
+- [Releases](/docs/RELEASE.md)
+- [Design spec](https://github.com/kutuso/os/blob/master/docs/superpowers/specs/2026-08-27-ramageddon-pivot-design.md)
+- [Downloads](https://github.com/kutuso/os/releases)
+- [GitHub](https://github.com/kutuso/os)

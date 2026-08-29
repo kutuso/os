@@ -1,6 +1,6 @@
 pkgname=kutu-base
 pkgver=0.1.0
-pkgrel=3
+pkgrel=4
 pkgdesc="kutu OS base: identity, first-boot calibration, app launcher wrapper, kernel feature prober"
 arch=(any)
 url="https://kutu.so"
@@ -14,4 +14,5 @@ package() {
   install -Dm644 "$startdir/etc/kutu/memory.conf" -t "$pkgdir/etc/kutu/"
   install -Dm644 "$startdir/preset/80-kutu.preset" -t "$pkgdir/usr/lib/systemd/system-preset/"
   install -Dm644 "$startdir/alpm-hooks/kutu-check-kernel.hook" -t "$pkgdir/usr/share/libalpm/hooks/"
+  install -Dm644 "$startdir/../../docs/MEMORY.md" -t "$pkgdir/usr/share/doc/kutu/"
 }

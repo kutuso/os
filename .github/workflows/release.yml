@@ -35,15 +35,19 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           name: kutu-release
           path: release
-      - name: prepare pages artifact (pacman repo)
+      - name: prepare pages artifact (pacman repo + docs site)
         run: |
-          mkdir -p site/repo
-          cp -r release/repo/x86_64 site/repo/
-          cp release/repo/x86_64/kutu.db.tar.zst site/repo/x86_64/kutu.db 2>/dev/null || true
+          mkdir -p site/repo/x86_64 site/docs
+          cp -r release/repo/x86_64/. site/repo/x86_64/
+          cp site/repo/x86_64/kutu.db.tar.zst site/repo/x86_64/kutu.db 2>/dev/null || true
+          cp site/index.html site/_sidebar.md site/logo.png site/
+          cp README.md MAINTAINERS.md site/
+          cp docs/MEMORY.md docs/BUILDING.md docs/ARCHITECTURE.md docs/RELEASE.md site/docs/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
