@@ -3,6 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 CONF="packages/kutu-calamares-config/calamares/settings.conf"
+CONF_DIR="packages/kutu-calamares-config/calamares"
 CAL_PKG=$(find work/repo packages/calamares -maxdepth 1 -name 'calamares-*.pkg.tar.zst' -print 2>/dev/null | sort | head -1)
 [ -n "$CAL_PKG" ] || { echo "FAIL: no built calamares package found; run: make packages"; exit 1; }
 
@@ -12,6 +13,7 @@ tar -tf "$CAL_PKG" > "$tmp/files"
 
 mapfile -t seq < <(awk '/^ *- show:/ {mode="show"; next} /^ *- exec:/ {mode="exec"; next} /^ *- [a-z]/ {gsub(/^ *- /, ""); print mode":"$0}' "$CONF")
 
+fail=0
 show=()
 execphase=()
 for entry in "${seq[@]}"; do
@@ -21,11 +23,14 @@ for entry in "${seq[@]}"; do
   [ "$phase" = "show" ] && show+=("$mod") || execphase+=("$mod")
 done
 
+for key in grubInstall grubMkconfig grubCfg grubProbe efiBootMgr; do
+  grep -q "^${key}:" "$CONF_DIR/modules/bootloader.conf" || { echo "FAIL: bootloader.conf missing required key '$key' (main.py indexes it raw; KeyError crashes the job)"; fail=1; }
+done
+
 has_module() {
   grep -q "^usr/lib/calamares/modules/$1/" "$tmp/files"
 }
 
-fail=0
 for mod in "${show[@]}" "${execphase[@]}"; do
   if ! has_module "$mod"; then
     echo "FAIL: module '$mod' in settings.conf does not exist in calamares package"

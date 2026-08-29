@@ -1,6 +1,6 @@
 pkgname=kutu-calamares-config
 pkgver=0.1.0
-pkgrel=3
+pkgrel=4
 pkgdesc="kutu OS Calamares installer configuration and branding"
 arch=(any)
 url="https://kutu.so"
