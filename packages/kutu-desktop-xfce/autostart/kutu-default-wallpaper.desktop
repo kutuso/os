@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=kutu default wallpaper
+Comment=Apply the kutu default wallpaper on first login
+Exec=/usr/lib/kutu/kutu-default-wallpaper.sh
+Terminal=false
+NoDisplay=true
+OnlyShowIn=XFCE;
