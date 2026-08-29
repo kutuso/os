@@ -77,6 +77,9 @@ expect {\]# $}
 send -- {[ -f /home/kutu/.config/kutu/wallpaper-applied ] && echo SMOKE:wallpaper-marked:ok || echo SMOKE:wallpaper-marked:fail; grep -q "backgrounds/xfce/kutu-default.svg" /home/kutu/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml && echo SMOKE:wallpaper-set:ok || echo SMOKE:wallpaper-set:fail}
 send "\r"
 expect {\]# $}
+send -- {grep -q "Materia-dark" /home/kutu/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml && echo SMOKE:xfwm4:ok || echo SMOKE:xfwm4:fail; grep -q "Papirus-Dark" /home/kutu/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml && echo SMOKE:icons:ok || echo SMOKE:icons:fail}
+send "\r"
+expect {\]# $}
 send -- {poweroff}
 send "\r"
 expect {
@@ -113,6 +116,8 @@ ck "desktop installer launcher" "SMOKE:launcher:ok"
 ck "default wallpaper installed" "SMOKE:wallpaper:ok"
 ck "wallpaper marker set" "SMOKE:wallpaper-marked:ok"
 ck "wallpaper set in session config" "SMOKE:wallpaper-set:ok"
+ck "xfwm4 decor theme" "SMOKE:xfwm4:ok"
+ck "icon theme default" "SMOKE:icons:ok"
 
 if [ "$fail" = 1 ]; then
   echo "SMOKE TEST: FAIL (log: $SMOKE_LOG)"
