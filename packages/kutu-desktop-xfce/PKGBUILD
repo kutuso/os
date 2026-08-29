@@ -1,6 +1,6 @@
 pkgname=kutu-desktop-xfce
 pkgver=0.1.0
-pkgrel=1
+pkgrel=2
 pkgdesc="kutu OS XFCE desktop: curated, themed, memory-wrapped"
 arch=(any)
 url="https://kutu.so"
@@ -26,7 +26,8 @@ package() {
   mkdir -p "$pkgdir/usr/share/themes/"
   cp -r "$startdir/branding/themes/KutuDark" "$pkgdir/usr/share/themes/"
   chmod -R u+rwX,go+rX "$pkgdir/usr/share/themes/KutuDark"
-  install -Dm644 "$startdir"/branding/wallpapers/*.svg -t "$pkgdir/usr/share/kutu/wallpapers/"
+  install -Dm644 "$startdir"/branding/wallpapers/*.svg -t "$pkgdir/usr/share/backgrounds/xfce/"
   install -Dm644 "$startdir"/branding/branding/kutu-logo.png -t "$pkgdir/usr/share/kutu/branding/"
   install -Dm644 "$startdir"/branding/branding/kutu-logo.svg -t "$pkgdir/usr/share/kutu/branding/"
+  install -Dm644 "$startdir/lightdm/20-kutu-greeter.conf" -t "$pkgdir/etc/lightdm/lightdm-gtk-greeter.conf.d/"
 }

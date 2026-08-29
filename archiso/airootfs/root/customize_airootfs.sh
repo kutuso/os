@@ -9,6 +9,10 @@ passwd -d kutu
 # Arch's lightdm PAM requires autologin group membership for autologin
 groupadd -r autologin 2>/dev/null || true
 usermod -aG autologin kutu
+# Installer shortcut on the live desktop
+install -d -m 755 /home/kutu/Desktop
+install -m 755 /usr/share/applications/calamares.desktop /home/kutu/Desktop/install-kutu-os.desktop
+chown -R kutu:kutu /home/kutu/Desktop
 
 sed -i 's/^#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
 locale-gen

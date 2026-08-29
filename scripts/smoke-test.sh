@@ -68,6 +68,9 @@ expect {\]# $}
 send -- {bash -x /usr/bin/kutu-damon start 2>&1 | tail -6; echo SMOKE:damon-dbg-done}
 send "\r"
 expect {\]# $}
+send -- {[ -f /home/kutu/Desktop/install-kutu-os.desktop ] && echo SMOKE:launcher:ok || echo SMOKE:launcher:fail; [ -f /usr/share/backgrounds/xfce/kutu-default.svg ] && echo SMOKE:wallpaper:ok || echo SMOKE:wallpaper:fail; grep -q "backgrounds/xfce/kutu-default.svg" /home/kutu/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml && echo SMOKE:wallpaper-set:ok || echo SMOKE:wallpaper-set:fail}
+send "\r"
+expect {\]# $}
 send -- {sleep 90; echo SMOKE:xfce:$(pgrep -c -x xfce4-session || echo 0)}
 send "\r"
 expect {\]# $}
@@ -103,6 +106,9 @@ done
 ck "kutu-check-kernel" "SMOKE:ck:0"
 ckr "kutu-run" "SMOKE:run:[1-9]"
 ckr "XFCE session" "SMOKE:xfce:[1-9]"
+ck "desktop installer launcher" "SMOKE:launcher:ok"
+ck "default wallpaper installed" "SMOKE:wallpaper:ok"
+ck "wallpaper set in session config" "SMOKE:wallpaper-set:ok"
 
 if [ "$fail" = 1 ]; then
   echo "SMOKE TEST: FAIL (log: $SMOKE_LOG)"

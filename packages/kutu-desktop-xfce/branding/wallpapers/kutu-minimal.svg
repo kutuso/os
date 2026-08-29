@@ -1,72 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- kutu OS Wallpaper - Minimal Dark -->
-<svg width="3840" height="2160" xmlns="http://www.w3.org/2000/svg">
+<!-- kutu OS wallpaper: minimal dark with pastel hairline -->
+<svg width="3840" height="2160" viewBox="0 0 3840 2160" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- Subtle gradient background -->
-    <linearGradient id="dark-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#16213e;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#0f3460;stop-opacity:1" />
-    </linearGradient>
-
-    <!-- Rainbow gradient for accents -->
-    <linearGradient id="rainbow-accent" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#FFB3BA;stop-opacity:1" />
-      <stop offset="16.67%" style="stop-color:#FFDFBA;stop-opacity:1" />
-      <stop offset="33.33%" style="stop-color:#FFFFBA;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#BAFFC9;stop-opacity:1" />
-      <stop offset="66.67%" style="stop-color:#BAE1FF;stop-opacity:1" />
-      <stop offset="83.33%" style="stop-color:#D4BAFF;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#FFB3E6;stop-opacity:1" />
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#11111b"/>
+      <stop offset="100%" stop-color="#181825"/>
     </linearGradient>
   </defs>
 
-  <!-- Dark background -->
-  <rect width="3840" height="2160" fill="url(#dark-gradient)"/>
+  <rect width="3840" height="2160" fill="url(#sky)"/>
 
-  <!-- Subtle grid pattern -->
-  <g opacity="0.05">
-    <!-- Vertical lines -->
-    <line x1="960" y1="0" x2="960" y2="2160" stroke="white" stroke-width="1"/>
-    <line x1="1920" y1="0" x2="1920" y2="2160" stroke="white" stroke-width="2"/>
-    <line x1="2880" y1="0" x2="2880" y2="2160" stroke="white" stroke-width="1"/>
-
-    <!-- Horizontal lines -->
-    <line x1="0" y1="540" x2="3840" y2="540" stroke="white" stroke-width="1"/>
-    <line x1="0" y1="1080" x2="3840" y2="1080" stroke="white" stroke-width="2"/>
-    <line x1="0" y1="1620" x2="3840" y2="1620" stroke="white" stroke-width="1"/>
+  <g opacity="0.9">
+    <rect x="768"   y="1700" width="420" height="10" fill="#FFB3BA"/>
+    <rect x="1188"  y="1700" width="420" height="10" fill="#FFDFBA"/>
+    <rect x="1608"  y="1700" width="420" height="10" fill="#FFFFBA"/>
+    <rect x="2028"  y="1700" width="420" height="10" fill="#BAFFC9"/>
+    <rect x="2448"  y="1700" width="420" height="10" fill="#BAE1FF"/>
+    <rect x="2868"  y="1700" width="420" height="10" fill="#D4BAFF"/>
   </g>
-
-  <!-- Corner accent - top left -->
-  <rect x="0" y="0" width="400" height="8" fill="url(#rainbow-accent)"/>
-  <rect x="0" y="0" width="8" height="400" fill="url(#rainbow-accent)"/>
-
-  <!-- Corner accent - bottom right -->
-  <rect x="3440" y="2152" width="400" height="8" fill="url(#rainbow-accent)"/>
-  <rect x="3832" y="1760" width="8" height="400" fill="url(#rainbow-accent)"/>
-
-  <!-- Small logo in bottom right -->
-  <g transform="translate(3300, 1620)">
-    <rect x="0" y="0" width="400" height="400" rx="60" ry="60"
-          fill="url(#rainbow-accent)" opacity="0.15"/>
-
-    <rect x="10" y="10" width="380" height="380" rx="55" ry="55"
-          fill="url(#dark-gradient)"/>
-
-    <rect x="40" y="40" width="320" height="320" rx="50" ry="50"
-          fill="url(#rainbow-accent)"/>
-
-    <text x="200" y="255"
-          font-family="Arial, sans-serif"
-          font-size="200"
-          font-weight="bold"
-          fill="#1a1a2e"
-          text-anchor="middle">K</text>
-  </g>
-
-  <!-- Center accent line -->
-  <line x1="1620" y1="1080" x2="2220" y2="1080"
-        stroke="url(#rainbow-accent)"
-        stroke-width="4"
-        opacity="0.3"/>
 </svg>

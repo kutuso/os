@@ -1,61 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- kutu OS Default Wallpaper - Pastel Rainbow Waves -->
-<svg width="3840" height="2160" xmlns="http://www.w3.org/2000/svg">
+<!-- kutu OS default wallpaper: dark field, signal waves, pastel ribbon -->
+<svg width="3840" height="2160" viewBox="0 0 3840 2160" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- Pastel rainbow gradient -->
-    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#FFB3BA;stop-opacity:1" />
-      <stop offset="16.67%" style="stop-color:#FFDFBA;stop-opacity:1" />
-      <stop offset="33.33%" style="stop-color:#FFFFBA;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#BAFFC9;stop-opacity:1" />
-      <stop offset="66.67%" style="stop-color:#BAE1FF;stop-opacity:1" />
-      <stop offset="83.33%" style="stop-color:#D4BAFF;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#FFB3E6;stop-opacity:1" />
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#11111b"/>
+      <stop offset="55%" stop-color="#181825"/>
+      <stop offset="100%" stop-color="#1e1e2e"/>
     </linearGradient>
-
-    <!-- Overlay gradient for depth -->
-    <radialGradient id="overlay">
-      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.1" />
-      <stop offset="100%" style="stop-color:#000000;stop-opacity:0.2" />
-    </radialGradient>
+    <pattern id="ribbon" width="490" height="490" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect x="0"   y="0" width="70"  height="490" fill="#FFB3BA"/>
+      <rect x="70"  y="0" width="70"  height="490" fill="#FFDFBA"/>
+      <rect x="140" y="0" width="70"  height="490" fill="#FFFFBA"/>
+      <rect x="210" y="0" width="70"  height="490" fill="#BAFFC9"/>
+      <rect x="280" y="0" width="70"  height="490" fill="#BAE1FF"/>
+      <rect x="350" y="0" width="70"  height="490" fill="#D4BAFF"/>
+      <rect x="420" y="0" width="70"  height="490" fill="#FFB3E6"/>
+    </pattern>
+    <clipPath id="band">
+      <path d="M0 2160 L2160 0 h560 L560 2160 z"/>
+    </clipPath>
+    <clipPath id="lower">
+      <path d="M0 1180 Q 960 980, 1920 1180 T 3840 1180 L3840 2160 L0 2160 z"/>
+    </clipPath>
   </defs>
 
-  <!-- Background -->
-  <rect width="3840" height="2160" fill="url(#bg-gradient)"/>
+  <rect width="3840" height="2160" fill="url(#sky)"/>
 
-  <!-- Decorative wave patterns -->
-  <g opacity="0.3">
-    <path d="M 0 1000 Q 960 800, 1920 1000 T 3840 1000 L 3840 2160 L 0 2160 Z"
-          fill="#ffffff"/>
-    <path d="M 0 1200 Q 960 1000, 1920 1200 T 3840 1200 L 3840 2160 L 0 2160 Z"
-          fill="#ffffff" opacity="0.5"/>
+  <g clip-path="url(#band)" opacity="0.8">
+    <rect width="3840" height="2160" fill="url(#ribbon)"/>
   </g>
 
-  <!-- Subtle overlay for depth -->
-  <rect width="3840" height="2160" fill="url(#overlay)"/>
-
-  <!-- Center logo -->
-  <g transform="translate(1664, 824)">
-    <!-- Logo background -->
-    <rect x="0" y="0" width="512" height="512" rx="80" ry="80"
-          fill="url(#bg-gradient)" opacity="0.8"
-          style="filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));"/>
-
-    <!-- K letter -->
-    <text x="256" y="340"
-          font-family="Arial, sans-serif"
-          font-size="280"
-          font-weight="bold"
-          fill="white"
-          text-anchor="middle"
-          style="text-shadow: 2px 2px 8px rgba(0,0,0,0.3);">K</text>
+  <g opacity="0.5">
+    <path d="M0 1180 Q 960 980, 1920 1180 T 3840 1180 L3840 1220 Q 2880 1020, 1920 1220 T 0 1220 z" fill="#BAE1FF" opacity="0.08"/>
+    <path d="M0 1300 Q 960 1100, 1920 1300 T 3840 1300 L3840 1330 Q 2880 1130, 1920 1330 T 0 1330 z" fill="#BAFFC9" opacity="0.06"/>
+    <path d="M0 1420 Q 960 1220, 1920 1420 T 3840 1420 L3840 1440 Q 2880 1240, 1920 1440 T 0 1440 z" fill="#D4BAFF" opacity="0.05"/>
   </g>
 
-  <!-- Subtle text at bottom -->
-  <text x="1920" y="2080"
-        font-family="Arial, sans-serif"
-        font-size="36"
-        fill="white"
-        text-anchor="middle"
-        opacity="0.6">kutu OS</text>
+  <rect y="2140" width="3840" height="20" fill="url(#ribbon)" opacity="0.9"/>
 </svg>
