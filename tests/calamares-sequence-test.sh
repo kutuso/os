@@ -16,16 +16,46 @@ mapfile -t seq < <(awk '/^ *- show:/ {mode="show"; next} /^ *- exec:/ {mode="exe
 fail=0
 show=()
 execphase=()
+execraw=()
 for entry in "${seq[@]}"; do
   phase=${entry%%:*}
   mod=${entry#*:}
-  mod=${mod%%@*}
-  [ "$phase" = "show" ] && show+=("$mod") || execphase+=("$mod")
+  if [ "$phase" = "show" ]; then
+    show+=("${mod%%@*}")
+  else
+    execphase+=("${mod%%@*}")
+    execraw+=("$mod")
+  fi
 done
 
 for key in grubInstall grubMkconfig grubCfg grubProbe efiBootMgr; do
   grep -q "^${key}:" "$CONF_DIR/modules/bootloader.conf" || { echo "FAIL: bootloader.conf missing required key '$key' (main.py indexes it raw; KeyError crashes the job)"; fail=1; }
 done
+
+kpos=-1; upos=-1; bpos=-1; donepos=-1
+for i in "${!execraw[@]}"; do
+  entry=${execraw[$i]}
+  [ "$entry" = "shellprocess@kernel" ] && kpos=$i
+  [ "$entry" = "unpackfs" ] && upos=$i
+  [ "$entry" = "bootloader" ] && bpos=$i
+  [ "$entry" = "shellprocess@done" ] && donepos=$i
+done
+if [ "$kpos" -lt 0 ] || [ "$kpos" -lt "$upos" ] || [ "$kpos" -gt "$bpos" ]; then
+  echo "FAIL: shellprocess@kernel must run after unpackfs and before bootloader (archiso strips kernels from airootfs; the target needs them copied from the ISO boot tree)"
+  fail=1
+fi
+if [ "$donepos" -lt "$bpos" ]; then
+  echo "FAIL: shellprocess@done must run after bootloader"
+  fail=1
+fi
+if [ "$kpos" -ge 0 ]; then
+  kconf="$CONF_DIR/modules/shellprocess@kernel.conf"
+  [ -f "$kconf" ] || { echo "FAIL: missing $kconf"; fail=1; }
+  grep -q 'archiso/bootmnt' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not copy from the ISO boot tree"; fail=1; }
+  grep -q "\${ROOT}/boot/" "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not copy into the target /boot"; fail=1; }
+  grep -q 'vmlinuz-linux' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not copy the kernel"; fail=1; }
+  grep -q 'initramfs-linux.img' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not copy the initramfs"; fail=1; }
+fi
 
 has_module() {
   grep -q "^usr/lib/calamares/modules/$1/" "$tmp/files"
