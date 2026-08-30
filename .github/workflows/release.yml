@@ -45,7 +45,7 @@ jobs:
           mkdir -p site/repo/x86_64 site/docs
           cp -r release/repo/x86_64/. site/repo/x86_64/
           cp site/repo/x86_64/kutu.db.tar.zst site/repo/x86_64/kutu.db 2>/dev/null || true
-          cp site/index.html site/docs.html site/_sidebar.md site/logo.png site/
+          cp site/index.html site/docs.html site/_sidebar.md site/logo.png site/CNAME site/
           cp -r site/screenshots site/
           cp README.md MAINTAINERS.md site/
           cp docs/MEMORY.md docs/BUILDING.md docs/ARCHITECTURE.md docs/RELEASE.md site/docs/
