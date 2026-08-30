@@ -54,7 +54,9 @@ if [ "$kpos" -ge 0 ]; then
   grep -q 'archiso/bootmnt' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not copy from the ISO boot tree"; fail=1; }
   grep -q "\${ROOT}/boot/" "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not copy into the target /boot"; fail=1; }
   grep -q 'vmlinuz-linux' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not copy the kernel"; fail=1; }
-  grep -q 'initramfs-linux.img' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not copy the initramfs"; fail=1; }
+  grep -q 'mkinitcpio' "$kconf" || { echo "FAIL: shellprocess@kernel.conf must build the initramfs in the target; the ISO initramfs is archiso's live image and cannot boot an installed system"; fail=1; }
+  grep -q 'timeout:' "$kconf" || { echo "FAIL: shellprocess@kernel.conf mkinitcpio needs a timeout above the 30s shellprocess default"; fail=1; }
+  grep -q 'initramfs-linux.img' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not verify the initramfs"; fail=1; }
   grep -q 'test -f' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not verify the copied kernel files"; fail=1; }
 fi
 
