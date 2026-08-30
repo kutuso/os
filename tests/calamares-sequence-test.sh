@@ -55,6 +55,7 @@ if [ "$kpos" -ge 0 ]; then
   grep -q "\${ROOT}/boot/" "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not copy into the target /boot"; fail=1; }
   grep -q 'vmlinuz-linux' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not copy the kernel"; fail=1; }
   grep -q 'initramfs-linux.img' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not copy the initramfs"; fail=1; }
+  grep -q 'test -f' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not verify the copied kernel files"; fail=1; }
 fi
 
 has_module() {
