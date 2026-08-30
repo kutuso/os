@@ -17,6 +17,14 @@ make packages  # build just the packages into work/repo
 make clean     # remove work/ (docker, no sudo needed)
 ```
 
+`make test-vm` honors environment overrides: `KUTU_VM_RAM` (MiB),
+`KUTU_VM_XRES`/`KUTU_VM_YRES` (display size), `KUTU_VM_DISK` (path to a
+scratch disk image — created sparse if missing; Calamares needs a disk to
+install to), `KUTU_VM_VNC=1` (serve VNC on 127.0.0.1:5900 instead of a
+local window, for headless hosts — tunnel with `ssh -L 5900:localhost:5900`),
+and `KUTU_VM_BOOT=disk` (boot the installed disk instead of the ISO, to
+verify an install).
+
 ## How the build works
 
 1. `scripts/build-packages.sh` builds every `packages/*/` PKGBUILD inside an

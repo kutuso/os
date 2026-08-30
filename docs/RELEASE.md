@@ -33,3 +33,5 @@ Without a key, CI builds unsigned packages and the shipped pacman.conf uses
    - `kutu-check-kernel` exits 0
    - `pacman -Sl kutu` lists packages (repo reachable)
    - Firefox launches inside an `app-firefox-*.scope` cgroup (`systemd-cgls`)
+   - landing page + docs render on the deployed Pages site
+   - refresh `site/screenshots/` if the desktop or installer look changed

@@ -29,7 +29,7 @@ hood and how to tune or disable any of it.
 ## Getting it
 
 Download the latest ISO from
-[releases](https://github.com/kutu-so/os/releases), write it to a USB stick
+[releases](https://github.com/kutuso/os/releases), write it to a USB stick
 (`dd if=kutu-os-*.iso of=/dev/sdX bs=4M status=progress`), boot it, click
 "Install kutu OS".
 

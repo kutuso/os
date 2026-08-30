@@ -1,4 +1,6 @@
-- [Home](/)
+- [Home](../)
+- [Readme](/README.md)
+- [Screenshots](../#screens)
 - [Memory stack](/docs/MEMORY.md)
 - [Building](/docs/BUILDING.md)
 - [Architecture](/docs/ARCHITECTURE.md)

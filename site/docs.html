@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>kutu OS — docs</title>
+  <meta name="description" content="kutu OS documentation: memory stack, building, architecture and release process.">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/dark.css">
+  <link rel="icon" href="logo.png">
+  <style>
+    body { font-family: system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; }
+    .app-name-link img { max-height: 96px; }
+    .sidebar ul li a { color: #b0bacb; }
+    .sidebar ul li.active > a { color: #ff9900; }
+    .sidebar .search input { background: #121722; border-color: #232c3f; }
+    a, .anchor { color: #ffb84d; }
+    .markdown-section a { color: #ff9900; }
+    tr:nth-child(2n) { background: #121722; }
+    .markdown-section code, .markdown-section pre { background: #121722; }
+    .docsify-copy-code-button { background: #1c2434; }
+  </style>
+</head>
+<body>
+  <a href="index.html" style="position:fixed;top:12px;right:16px;z-index:99;color:#8b96ab;font-size:.9rem;text-decoration:none">&#8592; kutu OS home</a>
+  <div id="app"></div>
+  <script>
+    window.$docsify = {
+      name: 'kutu OS docs',
+      logo: 'logo.png',
+      loadSidebar: true,
+      homepage: 'README.md',
+      subMaxLevel: 3,
+      search: 'auto'
+    }
+  </script>
+  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code@2"></script>
+</body>
+</html>

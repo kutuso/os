@@ -64,8 +64,16 @@ Upstream Calamares 3.3.14 built in our repo (Arch doesn't ship it; ckbcomp
 vendored from Debian console-setup). Our config: welcome (1.5GB RAM check) →
 locale/keyboard → partition (erase-disk + RAM-sized swap default) → users
 (autologin default on) → unpackfs (byte-identical offline install) →
-displaymanager/fstab/bootloader → post-install cleanup (repoint pacman.conf
-at the live repo, strip live-session files, enable kutu-firstboot).
+kernel + initramfs install (archiso strips kernels from the live squashfs,
+so the kernel is copied from the ISO boot tree and a fresh initramfs is
+built in the target with mkinitcpio — the live initramfs is archiso's and
+cannot boot an installed disk) → displaymanager/fstab/bootloader (grub) →
+post-install cleanup (repoint pacman.conf at the live repo, strip
+live-session files, enable kutu-firstboot). The mount module binds
+/dev, /proc, /sys and /run/udev into the target so grub-install and
+mkinitcpio work in the chroot; custom shellprocess instances
+(`shellprocess@kernel`, `shellprocess@done`) are declared in the settings
+`instances:` section.
 
 ## Design decisions
 

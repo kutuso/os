@@ -1,25 +1,269 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>kutu OS — the RAM-sipping Linux desktop</title>
   <meta name="description" content="kutu OS: a Linux desktop that treats memory as the scarce resource it is. zswap, MGLRU, DAMON, PSI-driven oomd — proven fleet-scale memory conservation for your machine.">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/dark.css">
+  <meta property="og:title" content="kutu OS — the RAM-sipping Linux desktop">
+  <meta property="og:description" content="zswap, MGLRU, DAMON and PSI-driven oomd, tuned for a desktop that runs great on 4–16GB.">
+  <meta property="og:image" content="screenshots/desktop.jpg">
+  <style>
+    :root {
+      --bg: #0b0e14;
+      --bg-soft: #121722;
+      --card: #161d2b;
+      --line: #232c3f;
+      --text: #dbe2ee;
+      --muted: #8b96ab;
+      --accent: #ff9900;
+      --accent-soft: rgba(255, 153, 0, 0.12);
+      --maxw: 1060px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.65 system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code, pre {
+      font: 0.875rem/1.5 ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+    }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+    nav {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(11, 14, 20, 0.85);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+    }
+    nav .wrap {
+      display: flex; align-items: center; gap: 28px; height: 60px;
+    }
+    nav .brand {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 1.05rem; color: var(--text);
+    }
+    nav .brand img { height: 28px; width: 28px; }
+    nav .links { margin-left: auto; display: flex; gap: 22px; }
+    nav .links a { color: var(--muted); font-size: 0.95rem; }
+    nav .links a:hover { color: var(--text); text-decoration: none; }
+    nav .links a.cta {
+      color: #1a1200; background: var(--accent);
+      padding: 7px 16px; border-radius: 8px; font-weight: 600;
+    }
+    nav .links a.cta:hover { filter: brightness(1.08); }
+
+    header.hero {
+      position: relative;
+      padding: 96px 0 84px;
+      background:
+        radial-gradient(900px 420px at 78% -10%, var(--accent-soft), transparent 65%),
+        radial-gradient(700px 380px at 8% 110%, rgba(64, 120, 255, 0.08), transparent 60%),
+        var(--bg);
+      border-bottom: 1px solid var(--line);
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
+    .chip {
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.02em;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid rgba(255, 153, 0, 0.35);
+      border-radius: 999px; padding: 4px 14px;
+    }
+    h1 {
+      margin: 0 0 18px; font-size: clamp(2.1rem, 5vw, 3.3rem);
+      line-height: 1.12; letter-spacing: -0.02em; font-weight: 800;
+    }
+    h1 .accent { color: var(--accent); }
+    .lede { font-size: 1.18rem; color: var(--muted); max-width: 720px; }
+    .lede strong { color: var(--text); }
+    .hero-btns { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 26px; border-radius: 10px; font-weight: 600;
+      border: 1px solid transparent; font-size: 1rem;
+    }
+    .btn:hover { text-decoration: none; filter: brightness(1.08); }
+    .btn-primary { background: var(--accent); color: #1a1200; }
+    .btn-ghost { border-color: var(--line); color: var(--text); background: var(--bg-soft); }
+    .hero-meta { margin-top: 26px; color: var(--muted); font-size: 0.92rem; }
+
+    section { padding: 72px 0; border-bottom: 1px solid var(--line); }
+    h2 {
+      margin: 0 0 8px; font-size: 1.9rem; letter-spacing: -0.01em;
+      font-weight: 750;
+    }
+    .section-sub { color: var(--muted); margin: 0 0 36px; max-width: 640px; }
+
+    .grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
+    .card {
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: 14px; padding: 24px;
+    }
+    .card h3 { margin: 12px 0 8px; font-size: 1.08rem; }
+    .card p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+    .card .ico { font-size: 1.5rem; }
+
+    .stack-strip {
+      display: grid; gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    }
+    .stack-strip .cell {
+      background: var(--bg-soft); border: 1px solid var(--line);
+      border-radius: 12px; padding: 18px 20px;
+    }
+    .stack-strip b { color: var(--accent); font-size: 0.95rem; }
+    .stack-strip span { display: block; color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+
+    .shots { display: grid; gap: 18px; grid-template-columns: 1fr; }
+    .shot { position: relative; }
+    .shot img {
+      width: 100%; display: block; border-radius: 12px;
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+    }
+    .shot figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 10px; }
+    .shot-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+    .repo-box {
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: 14px; padding: 26px; max-width: 640px;
+    }
+    .repo-box pre {
+      margin: 12px 0 0; padding: 16px; border-radius: 10px;
+      background: #0a0d13; border: 1px solid var(--line);
+      overflow-x: auto; color: #a8c7ea; font-size: 0.85rem;
+    }
+
+    footer { padding: 44px 0 60px; color: var(--muted); font-size: 0.9rem; }
+    footer .wrap { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; }
+    footer .sep { margin-left: auto; }
+  </style>
 </head>
 <body>
-  <div id="app"></div>
-  <script>
-    window.$docsify = {
-      name: 'kutu OS',
-      logo: 'logo.png',
-      loadSidebar: true,
-      homepage: 'README.md',
-      subMaxLevel: 3,
-      search: 'auto'
-    }
-  </script>
-  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#"><img src="logo.png" alt="kutu OS logo"> kutu OS</a>
+    <div class="links">
+      <a href="#features">Features</a>
+      <a href="#screens">Screens</a>
+      <a href="docs.html">Docs</a>
+      <a href="https://github.com/kutuso/os">GitHub</a>
+      <a class="cta" href="https://github.com/kutuso/os/releases/latest">Download</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="chips">
+      <span class="chip">Arch-based</span>
+      <span class="chip">XFCE desktop</span>
+      <span class="chip">Offline installer</span>
+      <span class="chip">MIT licensed</span>
+    </div>
+    <h1>The RAM-sipping Linux desktop<br>for the <span class="accent">DRAM-shortage era</span>.</h1>
+    <p class="lede">
+      DRAM prices roughly quintupled between 2025 and 2026, and analysts expect no
+      relief before 2028. kutu OS applies the memory stack Google and Meta proved at
+      fleet scale — <strong>zswap, MGLRU, DAMON, PSI-driven oomd</strong> — to an
+      ordinary desktop, with safe defaults and nothing to configure. Every gigabyte
+      your software doesn't waste is an upgrade you don't have to buy.
+    </p>
+    <div class="hero-btns">
+      <a class="btn btn-primary" href="https://github.com/kutuso/os/releases/latest">&#11015;&#65039; Download ISO</a>
+      <a class="btn btn-ghost" href="docs.html">Read the docs</a>
+    </div>
+    <p class="hero-meta">x86_64 &middot; 2GB+ RAM &middot; boots to a live session &middot; installs itself in a few clicks</p>
+  </div>
+</header>
+
+<section id="features">
+  <div class="wrap">
+    <h2>What you get</h2>
+    <p class="section-sub">A complete desktop that treats memory as the scarce resource it now is.</p>
+    <div class="grid">
+      <div class="card"><div class="ico">&#128190;</div><h3>Memory that goes further</h3>
+        <p>zstd-compressed zswap, MGLRU page aging and DAMON proactive reclaim typically reclaim 20–40% of your effective working set.</p></div>
+      <div class="card"><div class="ico">&#127919;</div><h3>Tunes itself on first boot</h3>
+        <p>RAM-size calibration picks saver, balanced or performance mode — user and per-app memory ceilings included.</p></div>
+      <div class="card"><div class="ico">&#128433;&#65039;</div><h3>Click-to-install</h3>
+        <p>Boot the live USB, poke around, then let the offline Calamares installer put it on disk. No accounts, no network needed.</p></div>
+      <div class="card"><div class="ico">&#128260;</div><h3>Updates forever</h3>
+        <p>Plain <code>pacman -Syu</code> against the kutu repository. It's still Arch underneath: the wiki, AUR and everything else work.</p></div>
+      <div class="card"><div class="ico">&#128683;</div><h3>Nothing to regret</h3>
+        <p><code>sudo kutu-reset</code> returns the whole stack to stock behavior. Every tweak is a package, every package is removable.</p></div>
+      <div class="card"><div class="ico">&#127749;</div><h3>Light but complete</h3>
+        <p>Curated XFCE with dark theming, Firefox wrapped in per-app memory ceilings, and wallpapers that won't eat your battery.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="wrap">
+    <h2>The memory stack</h2>
+    <p class="section-sub">Fleet-proven kernel machinery, tuned for a desktop and locked by a tested spec.</p>
+    <div class="stack-strip">
+      <div class="cell"><b>zswap (zstd)</b><span>Compressed swap in RAM — your swap device without the disk tax.</span></div>
+      <div class="cell"><b>MGLRU</b><span>Multi-generational LRU ages pages the way modern workloads actually behave.</span></div>
+      <div class="cell"><b>DAMON</b><span>Finds cold memory and reclaims it before pressure becomes stutter.</span></div>
+      <div class="cell"><b>systemd-oomd</b><span>PSI-driven kills target the actual hog instead of freezing the screen.</span></div>
+      <div class="cell"><b>kutu-run</b><span>Per-app MemoryHigh ceilings for Firefox &amp; friends, enforced by systemd.</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="screens">
+  <div class="wrap">
+    <h2>Screens</h2>
+    <p class="section-sub">Real screenshots — the live session and installer, captured from a QEMU boot of the ISO.</p>
+    <div class="shots">
+      <figure class="shot">
+        <img src="screenshots/installer.jpg" alt="The kutu OS Calamares installer" loading="lazy">
+        <figcaption>The offline Calamares installer running in the live session.</figcaption>
+      </figure>
+      <div class="shot-grid">
+        <figure class="shot">
+          <img src="screenshots/desktop.jpg" alt="kutu OS live XFCE desktop" loading="lazy">
+          <figcaption>The live XFCE desktop with the kutu dark theme.</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/terminal.jpg" alt="kutu OS memory tools in a terminal" loading="lazy">
+          <figcaption>Memory reporting and the kutu-run launcher in action.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="repo">
+  <div class="wrap">
+    <h2>Try the packages on Arch</h2>
+    <p class="section-sub">The whole memory stack ships as ordinary pacman packages from the kutu repo.</p>
+    <div class="repo-box">
+      <p style="margin:0">Add to <code>/etc/pacman.conf</code>:</p>
+      <pre>[kutu]
+Server = https://kutuso.github.io/os/repo/$arch/</pre>
+      <p style="margin:14px 0 0">Then <code>pacman -Sy kutu-memory</code> — or grab the ISO for the full desktop.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>kutu OS &middot; the RAM-sipping Linux desktop</span>
+    <a href="https://github.com/kutuso/os">GitHub</a>
+    <a href="docs.html">Docs</a>
+    <a href="https://github.com/kutuso/os/releases">Releases</a>
+    <span class="sep">MIT &amp; CC-BY-SA</span>
+  </div>
+</footer>
+
 </body>
 </html>
