@@ -11,7 +11,7 @@ tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 tar -tf "$CAL_PKG" > "$tmp/files"
 
-mapfile -t seq < <(awk '/^ *- show:/ {mode="show"; next} /^ *- exec:/ {mode="exec"; next} /^ *- [a-z]/ {gsub(/^ *- /, ""); print mode":"$0}' "$CONF")
+mapfile -t seq < <(awk '/^sequence:/ {ins=1; next} ins && /^ *- show:/ {mode="show"; next} ins && /^ *- exec:/ {mode="exec"; next} ins && /^ *- [a-z]/ && !/^ *- (module|id|config):/ {gsub(/^ *- /, ""); print mode":"$0}' "$CONF")
 
 fail=0
 show=()
@@ -58,6 +58,22 @@ if [ "$kpos" -ge 0 ]; then
   grep -q 'test -f' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not verify the copied kernel files"; fail=1; }
 fi
 
+for inst in kernel 'done'
+do
+  grep -Eq "^ *- module: shellprocess$" "$CONF" || { echo "FAIL: settings.conf has no instances: section; custom instances like shellprocess@$inst silently load without config and no-op"; fail=1; break; }
+  grep -Eq "^ *id: $inst\$" "$CONF" || { echo "FAIL: instances: section does not declare shellprocess@$inst"; fail=1; }
+  grep -q "config: shellprocess@$inst.conf" "$CONF" || { echo "FAIL: shellprocess@$inst instance does not point at shellprocess@$inst.conf"; fail=1; }
+done
+
+mountconf="$CONF_DIR/modules/mount.conf"
+[ -f "$mountconf" ] || { echo "FAIL: missing mount.conf; the mount module would skip /dev,/proc,/sys binds and grub-install fails in the chroot"; fail=1; }
+if [ -f "$mountconf" ]; then
+  grep -q 'mountPoint: /dev$' "$mountconf" || { echo "FAIL: mount.conf does not bind /dev into the target"; fail=1; }
+  grep -q 'mountPoint: /proc$' "$mountconf" || { echo "FAIL: mount.conf does not mount /proc into the target"; fail=1; }
+  grep -q 'mountPoint: /sys$' "$mountconf" || { echo "FAIL: mount.conf does not mount /sys into the target"; fail=1; }
+  grep -q 'mountPoint: /run/udev$' "$mountconf" || { echo "FAIL: mount.conf does not bind /run/udev into the target"; fail=1; }
+fi
+
 has_module() {
   grep -q "^usr/lib/calamares/modules/$1/" "$tmp/files"
 }
@@ -67,12 +83,23 @@ if [ -z "$KUTU_CONF_PKG" ]; then
   echo "FAIL: no built kutu-calamares-config in work/repo (run: make packages)"
   fail=1
 else
-  tar -xOf "$KUTU_CONF_PKG" etc/calamares/modules/bootloader.conf 2>/dev/null | grep -q "^grubInstall:" || {
+  tar -tf "$KUTU_CONF_PKG" > "$tmp/kutuconf-files"
+  tar -xOf "$KUTU_CONF_PKG" etc/calamares/settings.conf > "$tmp/kutuconf-settings" 2>/dev/null || true
+  tar -xOf "$KUTU_CONF_PKG" etc/calamares/modules/bootloader.conf > "$tmp/kutuconf-bootloader" 2>/dev/null || true
+  grep -q "^grubInstall:" "$tmp/kutuconf-bootloader" || {
     echo "FAIL: built kutu-calamares-config has old bootloader.conf (stale package vs sources?)"
     fail=1
   }
-  tar -tf "$KUTU_CONF_PKG" | grep -q "^etc/calamares/modules/shellprocess@kernel.conf$" || {
+  grep -q "^etc/calamares/modules/shellprocess@kernel.conf$" "$tmp/kutuconf-files" || {
     echo "FAIL: built kutu-calamares-config lacks shellprocess@kernel.conf (stale package vs sources?)"
+    fail=1
+  }
+  grep -q "^instances:" "$tmp/kutuconf-settings" || {
+    echo "FAIL: built kutu-calamares-config settings.conf lacks instances: section (stale package vs sources?)"
+    fail=1
+  }
+  grep -q "^etc/calamares/modules/mount.conf$" "$tmp/kutuconf-files" || {
+    echo "FAIL: built kutu-calamares-config lacks mount.conf (stale package vs sources?)"
     fail=1
   }
 fi
