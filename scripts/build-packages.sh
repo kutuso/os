@@ -12,6 +12,7 @@ fi
 
 REPO_DIR="work/repo"
 mkdir -p "$REPO_DIR"
+rm -f "$REPO_DIR"/kutu.db*
 # never let our own packages linger in the shared pacman cache: same-name
 # rebuilds would collide with stale copies and fail checksum validation
 rm -f /var/cache/pacman/pkg/kutu-*.pkg.tar.zst /var/cache/pacman/pkg/calamares-*.pkg.tar.zst
@@ -24,17 +25,21 @@ for pkg in packages/*/; do
   # install deps (official repos only; our own packages satisfy each other
   # via pacman -U below, alphabetical build order)
   # shellcheck disable=SC1091
+  ver=$( (cd "$pkg" && source PKGBUILD && echo "${pkgver:?}-${pkgrel:?}") )
+  # shellcheck disable=SC1091
   (cd "$pkg" && source PKGBUILD && \
     mapfile -t deps < <(printf '%s\n' "${depends[@]:-}" "${makedepends[@]:-}" | grep -v '^$') && \
     for d in "${deps[@]:-}"; do pacman -S --needed --noconfirm --asdeps "$d" >/dev/null 2>&1 || true; done)
-  if compgen -G "$pkg"*.pkg.tar.zst >/dev/null && [ "${KUTU_FORCE_BUILD:-0}" != 1 ]; then
-    echo "   $name: cached (rm the .pkg.tar.zst or KUTU_FORCE_BUILD=1 to rebuild)"
+  if [ "${KUTU_FORCE_BUILD:-0}" != 1 ] && compgen -G "${pkg}${name}-${ver}-"*.pkg.tar.zst >/dev/null; then
+    echo "   $name: cached ($ver)"
   else
-    echo "   building $name"
+    rm -f "$pkg${name}-"*.pkg.tar.zst
+    echo "   building $name ($ver)"
     (cd "$pkg" && runuser -u builduser -- makepkg -f --noconfirm >/dev/null)
   fi
-  pacman -U --noconfirm "$pkg"*.pkg.tar.zst >/dev/null
-  cp "$pkg"*.pkg.tar.zst "$REPO_DIR/"
+  rm -f "$REPO_DIR/${name}-"*.pkg.tar.zst
+  pacman -U --noconfirm "$pkg${name}-"*.pkg.tar.zst >/dev/null
+  cp "$pkg${name}-"*.pkg.tar.zst "$REPO_DIR/"
 done
 
 (cd "$REPO_DIR" && repo-add -R kutu.db.tar.zst ./*.pkg.tar.zst >/dev/null)

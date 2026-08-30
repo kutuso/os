@@ -61,6 +61,21 @@ has_module() {
   grep -q "^usr/lib/calamares/modules/$1/" "$tmp/files"
 }
 
+KUTU_CONF_PKG=$(find work/repo -maxdepth 1 -name 'kutu-calamares-config-*.pkg.tar.zst' 2>/dev/null | sort | head -1)
+if [ -z "$KUTU_CONF_PKG" ]; then
+  echo "FAIL: no built kutu-calamares-config in work/repo (run: make packages)"
+  fail=1
+else
+  tar -xOf "$KUTU_CONF_PKG" etc/calamares/modules/bootloader.conf 2>/dev/null | grep -q "^grubInstall:" || {
+    echo "FAIL: built kutu-calamares-config has old bootloader.conf (stale package vs sources?)"
+    fail=1
+  }
+  tar -tf "$KUTU_CONF_PKG" | grep -q "^etc/calamares/modules/shellprocess@kernel.conf$" || {
+    echo "FAIL: built kutu-calamares-config lacks shellprocess@kernel.conf (stale package vs sources?)"
+    fail=1
+  }
+fi
+
 for mod in "${show[@]}" "${execphase[@]}"; do
   if ! has_module "$mod"; then
     echo "FAIL: module '$mod' in settings.conf does not exist in calamares package"
