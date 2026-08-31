@@ -22,7 +22,7 @@ Without a key, CI builds unsigned packages and the shipped pacman.conf uses
 2. Tag: `git tag -s vX.Y.Z -m "kutu OS vX.Y.Z" && git push origin vX.Y.Z`
 3. CI (release.yml) then:
    - builds + signs all packages (makepkg --sign when key present)
-   - publishes the pacman repo to gh-pages (`repo/x86_64/`)
+   - publishes the pacman repo into `docs/repo/x86_64/` on master
    - builds the ISO with mkarchiso
    - smoke-tests the ISO in QEMU (TCG)
    - attaches `kutu-os-X.Y.Z-x86_64.iso` + `SHA256SUMS` to the GitHub release
@@ -34,4 +34,4 @@ Without a key, CI builds unsigned packages and the shipped pacman.conf uses
    - `pacman -Sl kutu` lists packages (repo reachable)
    - Firefox launches inside an `app-firefox-*.scope` cgroup (`systemd-cgls`)
    - landing page + docs render on the deployed Pages site
-   - refresh `site/screenshots/` if the desktop or installer look changed
+   - refresh `docs/screenshots/` if the desktop or installer look changed

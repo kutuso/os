@@ -6,7 +6,6 @@ on:
 permissions:
   contents: write
   pages: write
-  id-token: write
 
 jobs:
   build:
@@ -37,21 +36,25 @@ jobs:
         with:
           name: kutu-release
           path: release
-      - name: prepare pages artifact (pacman repo + docs site)
+      - name: publish pacman repo into docs/ (site is branch-deployed from docs/)
         run: |
-          mkdir -p site/repo/x86_64 site/docs
-          cp -r release/repo/x86_64/. site/repo/x86_64/
-          cp site/repo/x86_64/kutu.db.tar.zst site/repo/x86_64/kutu.db 2>/dev/null || true
-          cp site/index.html site/docs.html site/_sidebar.md site/logo.png site/CNAME site/
-          cp -r site/screenshots site/
-          cp README.md MAINTAINERS.md site/
-          cp docs/MEMORY.md docs/BUILDING.md docs/ARCHITECTURE.md docs/RELEASE.md site/docs/
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          git config user.name "kutu release bot"
+          git config user.email "release@kutu.so"
+          cp README.md docs/README.md
+          mkdir -p docs/repo/x86_64
+          rm -f docs/repo/x86_64/*
+          cp release/repo/x86_64/. docs/repo/x86_64/
+          cp docs/repo/x86_64/kutu.db.tar.zst docs/repo/x86_64/kutu.db 2>/dev/null || true
+          git add docs/repo docs/README.md
+          git diff --cached --quiet && echo "repo unchanged" || git commit -m "repo: publish packages for ${GITHUB_REF_NAME}"
+          git push origin HEAD:master || echo "warn: repo push failed (master moved?) — repo not published"
+      - name: trigger pages build (GITHUB_TOKEN pushes don't trigger workflows)
+        run: |
+          curl -fsS -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/kutuso/os/pages/builds \
+            || echo "warn: pages build trigger failed; site deploys on next master push"
       - name: create github release with ISO
         uses: softprops/action-gh-release@v2
         with:

@@ -29,7 +29,7 @@ tuning as config packages; a policy daemon (kutu-memoryd) and pressure API
 
 - **Never mutate the host.** All builds/tests run in docker (`archlinux:base-devel`)
   or QEMU. Scripts honor `KUTU_IN_DOCKER` to skip the docker wrapper.
-- **Tier-0 values are locked** by `docs/superpowers/specs/2026-08-27-ramageddon-pivot-design.md`
+- **Tier-0 values are locked** by `superpowers/specs/2026-08-27-ramageddon-pivot-design.md`
   (§6–§7): sysctls, zswap cmdline, MGLRU 0x0007/min_ttl 1000, mode thresholds
   (<6G saver / 6–16G balanced / >16G performance; user.slice 85/90/95%;
   Firefox 40/50/70%). Changing them is a spec change.
@@ -73,7 +73,7 @@ session. It must pass before any release tag.
 
 Tag `vX.Y.Z` → `.github/workflows/release.yml` builds + smoke-tests +
 publishes (ISO to GitHub release ≤2GiB — keep it that way; pacman repo to
-gh-pages at `repo/x86_64/`). Manual checklist in `docs/RELEASE.md`.
+`docs/repo/x86_64/` on master — the site is branch-deployed from `docs/`). Manual checklist in `docs/RELEASE.md`.
 
 ## Conventions
 
@@ -81,5 +81,5 @@ gh-pages at `repo/x86_64/`). Manual checklist in `docs/RELEASE.md`.
 - Shell scripts must pass `shellcheck` (enforced by `scripts/test.sh`).
 - No comments in code unless the file is documentation (config files may
   carry explanatory comments).
-- Plans/specs live in `docs/superpowers/`; M2/M3 get their own spec+plan
+- Plans/specs live in `superpowers/`; M2/M3 get their own spec+plan
   when started.

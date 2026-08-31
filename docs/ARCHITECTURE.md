@@ -77,7 +77,7 @@ mkinitcpio work in the chroot; custom shellprocess instances
 
 ## Design decisions
 
-See the design spec (`docs/superpowers/specs/2026-08-27-ramageddon-pivot-design.md`)
+See the design spec (`superpowers/specs/2026-08-27-ramageddon-pivot-design.md`)
 for rationale on: package-first architecture, stock kernel (no custom build
 in v1), zswap over zram, XFCE on X11, systemd as sole cgroup writer, escape
 hatches, and the M1/M2/M3 roadmap (M2: kutu-doctor + kutu-memoryd; M3:
