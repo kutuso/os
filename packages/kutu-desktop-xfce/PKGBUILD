@@ -1,6 +1,6 @@
 pkgname=kutu-desktop-xfce
 pkgver=0.1.0
-pkgrel=3
+pkgrel=4
 pkgdesc="kutu OS XFCE desktop: curated, themed, memory-wrapped"
 arch=(any)
 url="https://kutu.so"
@@ -9,7 +9,7 @@ depends=(exo garcon thunar thunar-volman tumbler xfce4-appfinder xfce4-panel
           xfce4-session xfce4-settings xfconf xfdesktop xfwm4
           xfce4-terminal xfce4-power-manager xfce4-screensaver xfce4-screenshooter
           xfce4-pulseaudio-plugin gvfs xdg-user-dirs mousepad ristretto
-          lightdm lightdm-gtk-greeter network-manager-applet blueman
+          lightdm lightdm-gtk-greeter network-manager-applet
           pipewire wireplumber pipewire-audio pipewire-pulse pavucontrol
           firefox adwaita-icon-theme papirus-icon-theme materia-gtk-theme
           noto-fonts ttf-dejavu librsvg xorg-xrandr)
