@@ -70,6 +70,9 @@ do
   grep -q "config: shellprocess@$inst.conf" "$CONF" || { echo "FAIL: shellprocess@$inst instance does not point at shellprocess@$inst.conf"; fail=1; }
 done
 
+uconf="$CONF_DIR/modules/users.conf"
+grep -q "^sudoersGroup: wheel" "$uconf" || { echo "FAIL: users.conf must set sudoersGroup: wheel (the users module writes /etc/sudoers.d/10-installer from it; arch ships %wheel commented out, so without it the installed user cannot sudo)"; fail=1; }
+
 mountconf="$CONF_DIR/modules/mount.conf"
 [ -f "$mountconf" ] || { echo "FAIL: missing mount.conf; the mount module would skip /dev,/proc,/sys binds and grub-install fails in the chroot"; fail=1; }
 if [ -f "$mountconf" ]; then
