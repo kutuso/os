@@ -1,11 +1,11 @@
 pkgname=kutu-base
 pkgver=0.1.0
-pkgrel=4
+pkgrel=5
 pkgdesc="kutu OS base: identity, first-boot calibration, app launcher wrapper, kernel feature prober"
 arch=(any)
 url="https://kutu.so"
 license=(MIT)
-depends=(systemd bash)
+depends=(systemd bash which)
 install=kutu-base.install
 package() {
   install -Dm755 "$startdir/usr/bin/kutu-run" "$startdir/usr/bin/kutu-firstboot" "$startdir/usr/bin/kutu-check-kernel" -t "$pkgdir/usr/bin/"
