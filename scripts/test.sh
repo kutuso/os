@@ -12,7 +12,7 @@ if [ "${KUTU_IN_DOCKER:-0}" != 1 ]; then
 fi
 
 echo "== kutu OS test suite (in-container) =="
-pacman -Sy --noconfirm --needed shellcheck || { pacman -Syy --noconfirm archlinux-keyring && pacman -Sy --noconfirm --needed shellcheck; }
+pacman -Sy --noconfirm --needed shellcheck python-pyaml || { pacman -Syy --noconfirm archlinux-keyring && pacman -Sy --noconfirm --needed shellcheck python-pyaml; }
 
 echo "-- shellcheck"
 mapfile -t scripts < <(find packages \( -path '*/pkg' -o -path '*/src' \) -prune -o \
