@@ -8,9 +8,9 @@ strings:
   shortVersionedName: "kutu 0.1"
   bootloaderEntryName: "kutu OS"
   productUrl: "https://kutu.so"
-  supportUrl: "https://github.com/kutu-so/os/issues"
-  knownIssuesUrl: "https://github.com/kutu-so/os/issues"
-  releaseNotesUrl: "https://github.com/kutu-so/os/releases"
+  supportUrl: "https://github.com/kutuso/os/issues"
+  knownIssuesUrl: "https://github.com/kutuso/os/issues"
+  releaseNotesUrl: "https://github.com/kutuso/os/releases"
 images:
   productLogo: "logo.png"
   productIcon: "logo.png"
