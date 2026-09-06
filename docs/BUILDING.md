@@ -18,12 +18,12 @@ make clean     # remove work/ (docker, no sudo needed)
 ```
 
 `make test-vm` honors environment overrides: `KUTU_VM_RAM` (MiB),
-`KUTU_VM_XRES`/`KUTU_VM_YRES` (display size), `KUTU_VM_DISK` (path to a
-scratch disk image — created sparse if missing; Calamares needs a disk to
-install to), `KUTU_VM_VNC=1` (serve VNC on 127.0.0.1:5900 instead of a
-local window, for headless hosts — tunnel with `ssh -L 5900:localhost:5900`),
-and `KUTU_VM_BOOT=disk` (boot the installed disk instead of the ISO, to
-verify an install).
+`KUTU_VM_XRES`/`KUTU_VM_YRES` (display size), `KUTU_VM_DISK` (size of the
+scratch disk image, e.g. `32G` — created sparse at `work/test-vm-disk.raw`
+if missing; set `none` or `0` for no disk), `KUTU_VM_VNC=<N>` (serve VNC on
+`127.0.0.1:5900+N`, e.g. `KUTU_VM_VNC=0` → port 5900, for headless hosts —
+tunnel with `ssh -L 5900:localhost:5900`), and `KUTU_VM_BOOT=disk` (boot
+the installed disk instead of the ISO, to verify an install).
 
 ## How the build works
 
@@ -45,8 +45,11 @@ package's `*.pkg.tar.zst` or set `KUTU_FORCE_BUILD=1` to force a rebuild).
 ## Building on an Arch host without docker
 
 Set `KUTU_IN_DOCKER=1` and run the scripts directly on a real Arch system
-with `archiso`, `expect`, and `qemu-system-x86_64` installed. Not
-recommended: the docker path is the canonical, reproducible one.
+with `archiso`, `expect`, and `qemu-system-x86_64` installed. **This is a
+trust flag, not isolation**: it installs build dependencies and kutu
+packages into that system and runs builds as root/builduser in place.
+Use only on a disposable machine or container — the docker path is the
+canonical, safe one.
 
 ## Notes
 

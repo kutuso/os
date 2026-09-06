@@ -15,7 +15,7 @@ The operating manual for whoever maintains this distro. For what kutu OS
    `scripts/build-packages.sh` — it mitigates, the bump is the discipline).
 4. **Tier-0 memory values are spec-locked.** The sysctls, zswap cmdline,
    MGLRU settings, and mode thresholds are defined in
-   `docs/superpowers/specs/2026-08-27-ramageddon-pivot-design.md` §6–§7.
+   `superpowers/specs/2026-08-27-ramageddon-pivot-design.md` §6–§7.
    Changing a value is a spec change: update the spec in the same commit.
 5. **ISO stays under 2 GiB** (GitHub release asset limit). Currently ~1.7
    GiB; if you add packages, check the size before tagging.
@@ -27,8 +27,10 @@ The operating manual for whoever maintains this distro. For what kutu OS
 3. `make smoke` — boot + assert the whole memory stack.
 4. Check `ls -lh out/*.iso` < 2 GiB.
 5. `git tag -s vX.Y.Z -m "..." && git push origin master vX.Y.Z`
-   CI (`release.yml`) builds, smoke-tests, publishes the pacman repo to
-   gh-pages and the ISO to the GitHub release.
+   CI (`release.yml`) runs the full test suite, builds, smoke-tests,
+   publishes the pacman repo into `docs/repo/x86_64/` on master (the site
+   is branch-deployed from `docs/`), verifies every published artifact over
+   HTTPS, and attaches the ISO to the GitHub release.
 6. Post-release verification (30 min, do it every time):
    - the release page has the ISO + SHA256SUMS
    - `https://<org>.github.io/os/repo/x86_64/` serves `kutu.db`
@@ -76,7 +78,9 @@ acceptable for v0.x, **must** be fixed before v1.0:
    `PackageRequired` and update the ISO's `/etc/pacman.conf` handling
    accordingly.
 5. Release once more; installed systems pick up the keyring via
-   `pacman -Syu`.
+   `pacman -Syu` (the keyring's `post_upgrade` scriptlet populates it on
+   upgrades too), then flip the shipped `[kutu]` SigLevel and release
+   signed-only packages.
 
 If the key ever leaks: revoke, generate a new one, ship it via the ISO
 build (the only fully-trusted channel), and note the rotation in the

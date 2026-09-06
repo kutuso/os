@@ -12,14 +12,15 @@ to buy at crisis prices.
 kutu OS applies the memory-conservation stack that Google and Meta proved at
 fleet scale (compressed swap tiers, smarter page aging, proactive reclaim,
 pressure-driven killing) to a normal desktop, with safe defaults and nothing
-to configure. See [docs/MEMORY.md](docs/MEMORY.md) for what runs under the
+to configure. See [MEMORY.md](./MEMORY.md) for what runs under the
 hood and how to tune or disable any of it.
 
 ## What you get
 
 - An Arch-based XFCE desktop that boots into a live session and installs
   itself with a few clicks (Calamares installer, offline, no accounts needed)
-- A memory stack that typically reclaims 20–40% of effective working set:
+- A memory stack designed to reclaim 20–40% of effective working set
+  (design target — measured baselines land with M2's benchmark harness):
   zswap (zstd-compressed swap in RAM), MGLRU page aging, DAMON proactive
   reclaim, PSI-driven systemd-oomd, and per-application memory ceilings
 - First-boot auto-tuning by RAM size (saver / balanced / performance modes)
@@ -59,8 +60,8 @@ make test       # lint + unit tests + package builds (docker)
 ```
 
 Nothing on your host is touched — every build and test runs in disposable
-containers and VMs. Details: [docs/BUILDING.md](docs/BUILDING.md),
-[docs/RELEASE.md](docs/RELEASE.md).
+containers and VMs. Details: [BUILDING.md](./BUILDING.md),
+[RELEASE.md](./RELEASE.md).
 
 ## FAQ
 

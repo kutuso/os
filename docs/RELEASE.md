@@ -21,9 +21,13 @@ Without a key, CI builds unsigned packages and the shipped pacman.conf uses
    ISO build, QEMU boot assertions).
 2. Tag: `git tag -s vX.Y.Z -m "kutu OS vX.Y.Z" && git push origin vX.Y.Z`
 3. CI (release.yml) then:
-   - builds + signs all packages (makepkg --sign when key present)
-   - publishes the pacman repo into `docs/repo/x86_64/` on master
-   - builds the ISO with mkarchiso
+   - runs the full test suite (lint, unit tests, package builds)
+   - builds all packages; signs packages + repo db **if** `KUTU_GPG_KEY`
+     is provisioned (unsigned until then — never past v1, spec decision D9)
+   - publishes the pacman repo into `docs/repo/x86_64/` on master and
+     verifies every artifact is served over HTTPS before announcing
+   - builds the ISO with mkarchiso (named `kutu-os-X.Y.Z-x86_64.iso`
+     from the tag)
    - smoke-tests the ISO in QEMU (TCG)
    - attaches `kutu-os-X.Y.Z-x86_64.iso` + `SHA256SUMS` to the GitHub release
 4. Manual release checklist (run in QEMU with the release ISO):
@@ -31,7 +35,8 @@ Without a key, CI builds unsigned packages and the shipped pacman.conf uses
    - run "Install kutu OS" (Calamares) to disk with default options -> reboot
    - installed system: `grep zswap.enabled=1 /proc/cmdline`
    - `kutu-check-kernel` exits 0
-   - `pacman -Sl kutu` lists packages (repo reachable)
+   - `pacman -Sl kutu` lists packages (repo reachable at
+     `https://kutuso.github.io/os/repo/x86_64/`)
    - Firefox launches inside an `app-firefox-*.scope` cgroup (`systemd-cgls`)
    - landing page + docs render on the deployed Pages site
    - refresh `docs/screenshots/` if the desktop or installer look changed

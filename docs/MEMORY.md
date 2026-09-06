@@ -47,8 +47,12 @@ aside and lets the emergency reclaim paths work.
 
 The kernel's Pressure Stall Information (PSI) measures how much time tasks
 actually spend stalled waiting for memory. systemd-oomd watches PSI and
-kills a whole misbehaving application (not your session, not your compositor,
-not your audio) *before* the machine grinds to a halt.
+kills a whole misbehaving application *before* the machine grinds to a
+halt. Monitoring is per-user (`user@.service`), so one user's runaway
+browser is dealt with without touching other users. `ManagedOOMPreference=
+avoid` drop-ins ask oomd to spare PipeWire/WirePlumber/portal where the
+kernel honors it; note systemd only honors that preference for root-owned
+units, so user-session services are best-effort protected.
 
 ### Per-application memory ceilings
 
@@ -79,23 +83,29 @@ raised kswapd headroom, and smoothed disk writeback. All in
 
 `kutu-firstboot` measures your RAM and picks a mode:
 
-| Mode | Chosen when | Effect |
+| Mode | Chosen when | Effect (M1) |
 |---|---|---|
-| saver | < 6 GB | tighter ceilings, more aggressive reclaim |
+| saver | < 6 GB | tighter per-app + user-session ceilings |
 | balanced | 6–16 GB | the values documented above |
-| performance | > 16 GB | looser ceilings, zswap pool 20% |
+| performance | > 16 GB | looser ceilings |
 
-The mode is recorded in `/etc/kutu/memory.conf` — edit it and reboot to
-change. (A user-visible mode switcher ships with M2, along with `kutu-doctor`
-for live memory-health visibility and the `kutu-memoryd` policy daemon.)
+The mode is recorded in `/etc/kutu/memory.conf`. In M1 the modes differ
+only in the memory ceilings (Firefox and user-session `MemoryHigh`) applied
+at first boot; the rest of the Tier-0 stack is identical in all modes. A
+user-visible mode switcher that re-applies full policy sets ships with M2,
+along with `kutu-doctor` for live memory-health visibility and the
+`kutu-memoryd` policy daemon.
 
 ## Escape hatches
 
 Everything is reversible:
 
-- `sudo kutu-reset` — reverts all kutu memory tuning to stock Arch defaults,
-  disables the kutu services, and regenerates the boot configuration.
-  Reboot afterwards.
+- `sudo kutu-reset` — reverts the kutu memory stack to stock Arch defaults:
+  disables the kutu services and systemd-oomd, restores stock sysctls, MGLRU
+  and zswap kernel defaults, disables the journald/I/O-scheduler/oomd
+  drop-ins, drops the generated ceilings, and regenerates the boot
+  configuration. Reboot afterwards. Package upgrades restore the disabled
+  files — re-run `kutu-reset` after upgrading `kutu-memory`.
 - Remove individual pieces: `systemctl disable --now kutu-damon` (DAMON),
   `kutu-memory-early` (zswap zpool + MGLRU), `systemd-oomd`.
 - `kutu-check-kernel` — verifies every feature the stack relies on; run it

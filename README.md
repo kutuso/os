@@ -19,7 +19,8 @@ hood and how to tune or disable any of it.
 
 - An Arch-based XFCE desktop that boots into a live session and installs
   itself with a few clicks (Calamares installer, offline, no accounts needed)
-- A memory stack that typically reclaims 20–40% of effective working set:
+- A memory stack designed to reclaim 20–40% of effective working set
+  (design target — measured baselines land with M2's benchmark harness):
   zswap (zstd-compressed swap in RAM), MGLRU page aging, DAMON proactive
   reclaim, PSI-driven systemd-oomd, and per-application memory ceilings
 - First-boot auto-tuning by RAM size (saver / balanced / performance modes)

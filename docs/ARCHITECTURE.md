@@ -42,8 +42,8 @@ to them as ordinary `pacman -Syu` updates.
   zpool on pre-6.10 kernels + MGLRU enable), sysctl.d (swappiness etc).
 - Always on: `kutu-damon.service` (DAMON sysfs scheme: page-out regions
   untouched ≥10s, watermark-gated 5–15% free band), systemd-oomd with
-  ManagedOOM on user.slice and avoid-preference on session services,
-  journald volatile.
+  per-user ManagedOOM on `user@.service` and avoid-preference drop-ins for
+  session services (user-manager units), journald volatile.
 - First boot: `kutu-firstboot.service` calibrates mode (saver/balanced/
   performance by RAM size), writes user.slice MemoryHigh and the Firefox
   per-app ceiling.
@@ -53,23 +53,28 @@ to them as ordinary `pacman -Syu` updates.
 
 ### Desktop (kutu-desktop-xfce)
 
-XFCE 4.20 on X11, lightdm (autologin via PAM `autologin` group on live;
-Calamares wires the installed user), PipeWire, NetworkManager, Firefox with
-raised tab-unload thresholds via autoconfig. Theming from
+XFCE 4.20 on X11, lightdm (autologin via PAM `autologin` group on live only;
+the installed user logs in with a password — installer autologin is off),
+PipeWire, NetworkManager, Firefox with raised tab-unload thresholds via
+autoconfig and its desktop Exec wrapped through `kutu-run`. Theming from
 `branding/` (KutuDark GTK theme, kutu wallpapers).
 
 ### Installer (calamares + kutu-calamares-config)
 
 Upstream Calamares 3.3.14 built in our repo (Arch doesn't ship it; ckbcomp
-vendored from Debian console-setup). Our config: welcome (1.5GB RAM check) →
-locale/keyboard → partition (erase-disk + RAM-sized swap default) → users
-(autologin default on) → unpackfs (byte-identical offline install) →
-kernel + initramfs install (archiso strips kernels from the live squashfs,
-so the kernel is copied from the ISO boot tree and a fresh initramfs is
-built in the target with mkinitcpio — the live initramfs is archiso's and
-cannot boot an installed disk) → displaymanager/fstab/bootloader (grub) →
-post-install cleanup (repoint pacman.conf at the live repo, strip
-live-session files, enable kutu-firstboot). The mount module binds
+vendored from Debian console-setup). Our config: welcome (RAM/storage checks
+enforced) → locale/keyboard → partition (no destructive default preselected,
+LUKS2, suspend-capable swap default) → users (autologin off, password
+required) → unpackfs (byte-identical offline install) → kernel copy +
+initramfs build (archiso strips kernels from the live squashfs, so the
+kernel is copied from the ISO boot tree; `initcpiocfg` derives the mkinitcpio
+hook set from the actual partition layout — block/filesystems/encrypt/lvm2/
+resume/microcode — and `initcpio` builds it in the target) →
+displaymanager/fstab/bootloader (grub) → post-install cleanup (append the
+`[kutu]` repo section with the canonical URL, strip live-session files,
+disable live SSH and remove its host keys, remove the live firstboot marker
+so the installed system recalibrates, enable kutu-firstboot; every cleanup
+command is mandatory and asserted). The mount module binds
 /dev, /proc, /sys and /run/udev into the target so grub-install and
 mkinitcpio work in the chroot; custom shellprocess instances
 (`shellprocess@kernel`, `shellprocess@done`) are declared in the settings
