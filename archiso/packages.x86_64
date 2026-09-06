@@ -6,6 +6,8 @@ mkinitcpio
 mkinitcpio-archiso
 linux
 linux-firmware
+amd-ucode
+intel-ucode
 grub
 efibootmgr
 os-prober

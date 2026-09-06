@@ -54,13 +54,42 @@ if [ "$kpos" -ge 0 ]; then
   grep -q 'archiso/bootmnt' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not copy from the ISO boot tree"; fail=1; }
   grep -q "\${ROOT}/boot/" "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not copy into the target /boot"; fail=1; }
   grep -q 'vmlinuz-linux' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not copy the kernel"; fail=1; }
-  grep -q 'mkinitcpio' "$kconf" || { echo "FAIL: shellprocess@kernel.conf must build the initramfs in the target; the ISO initramfs is archiso's live image and cannot boot an installed system"; fail=1; }
   grep -q 'mkinitcpio.conf.d/archiso.conf' "$kconf" || { echo "FAIL: shellprocess@kernel.conf must remove the archiso mkinitcpio drop-in; it overrides HOOKS and rebuilds a live-only initramfs"; fail=1; }
-  grep -q 'mkinitcpio.d/linux.preset' "$kconf" || { echo "FAIL: shellprocess@kernel.conf must replace the archiso preset; mkinitcpio -P would otherwise build only the live image"; fail=1; }
-  grep -q 'HOOKS=' "$kconf" || { echo "FAIL: shellprocess@kernel.conf must set disk-boot HOOKS in the target mkinitcpio.conf"; fail=1; }
-  grep -q 'timeout:' "$kconf" || { echo "FAIL: shellprocess@kernel.conf mkinitcpio needs a timeout above the 30s shellprocess default"; fail=1; }
-  grep -q 'initramfs-linux.img' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not verify the initramfs"; fail=1; }
-  grep -q 'test -f' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not verify the copied kernel files"; fail=1; }
+  if grep -q 'HOOKS=' "$kconf"; then
+    echo "FAIL: shellprocess@kernel.conf hand-writes HOOKS; initcpiocfg must derive them from the actual partitions (a hand-written list missing block/filesystems/encrypt breaks installed boot)"
+    fail=1
+  fi
+fi
+
+icfgpos=-1; ibuildpos=-1
+for i in "${!execraw[@]}"; do
+  [ "${execraw[$i]}" = "initcpiocfg" ] && icfgpos=$i
+  [ "${execraw[$i]}" = "initcpio" ] && ibuildpos=$i
+done
+[ "$icfgpos" -ge 0 ] || { echo "FAIL: initcpiocfg missing from exec sequence"; fail=1; }
+[ "$ibuildpos" -ge 0 ] || { echo "FAIL: initcpio missing from exec sequence"; fail=1; }
+if [ "$icfgpos" -ge 0 ] && [ "$ibuildpos" -ge 0 ] && [ "$kpos" -ge 0 ]; then
+  [ "$icfgpos" -gt "$kpos" ] || { echo "FAIL: initcpiocfg must run after the kernel copy (shellprocess@kernel)"; fail=1; }
+  [ "$ibuildpos" -gt "$icfgpos" ] || { echo "FAIL: initcpio must run after initcpiocfg"; fail=1; }
+  [ "$ibuildpos" -lt "$bpos" ] || { echo "FAIL: initramfs must be built before the bootloader"; fail=1; }
+fi
+iconf="$CONF_DIR/modules/initcpio.conf"
+[ -f "$iconf" ] || { echo "FAIL: missing $iconf"; fail=1; }
+if [ -f "$iconf" ]; then
+  grep -q '^kernel: linux' "$iconf" || { echo "FAIL: initcpio.conf must select the linux preset"; fail=1; }
+fi
+
+dconf="$CONF_DIR/modules/shellprocess@done.conf"
+if [ -f "$dconf" ]; then
+  if grep -Eq '^ *- "-' "$dconf"; then
+    echo "FAIL: shellprocess@done suppresses command failures with a leading '-'; silent cleanup failure leaves root autologin / passwordless sudo installed"
+    fail=1
+  fi
+  grep -q 'kutuso.github.io/os/repo' "$dconf" || { echo "FAIL: shellprocess@done must write the canonical kutuso repo URL into the target pacman.conf"; fail=1; }
+  grep -q 'ssh_host_' "$dconf" || { echo "FAIL: shellprocess@done must remove live-generated SSH host keys from the target"; fail=1; }
+  grep -q 'disable sshd' "$dconf" || { echo "FAIL: shellprocess@done must disable sshd in the target"; fail=1; }
+  grep -q 'firstboot-done' "$dconf" || { echo "FAIL: shellprocess@done must remove the live firstboot marker so the installed system recalibrates"; fail=1; }
+  grep -q 'initramfs-linux.img' "$dconf" || { echo "FAIL: shellprocess@done must verify the target initramfs was built"; fail=1; }
 fi
 
 for inst in kernel 'done'
@@ -72,6 +101,8 @@ done
 
 uconf="$CONF_DIR/modules/users.conf"
 grep -q "^sudoersGroup: wheel" "$uconf" || { echo "FAIL: users.conf must set sudoersGroup: wheel (the users module writes /etc/sudoers.d/10-installer from it; arch ships %wheel commented out, so without it the installed user cannot sudo)"; fail=1; }
+grep -q "^doAutologin: false" "$uconf" || { echo "FAIL: users.conf must default autologin off (empty-password autologin admin risk)"; fail=1; }
+grep -q "minLength: 8" "$uconf" || { echo "FAIL: users.conf must enforce a minimum password length"; fail=1; }
 
 mountconf="$CONF_DIR/modules/mount.conf"
 [ -f "$mountconf" ] || { echo "FAIL: missing mount.conf; the mount module would skip /dev,/proc,/sys binds and grub-install fails in the chroot"; fail=1; }
