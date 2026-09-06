@@ -3,6 +3,10 @@ on:
   push:
     tags: ["v*"]
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pages: write
@@ -12,15 +16,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: derive version + epoch from the tag commit
+        run: |
+          echo "KUTU_ISO_VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+          echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> "$GITHUB_ENV"
+      - name: full test suite (lint, unit tests, package builds)
+        env:
+          KUTU_FORCE_BUILD: "1"
+        run: ./scripts/test.sh
       - name: build ISO (packages + mkarchiso in privileged container)
         run: ./scripts/build.sh
+      - name: import release key (when provisioned)
+        id: gpgkey
+        env:
+          KUTU_GPG_KEY: ${{ secrets.KUTU_GPG_KEY }}
+        run: |
+          if [ -n "$KUTU_GPG_KEY" ]; then
+            printf '%s' "$KUTU_GPG_KEY" | gpg --import
+            echo "has_key=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_key=0" >> "$GITHUB_OUTPUT"
+          fi
+      - name: sign packages + repo db
+        if: steps.gpgkey.outputs.has_key == '1'
+        run: |
+          for f in work/repo/*.pkg.tar.zst work/repo/kutu.db.tar.zst; do
+            gpg --batch --yes --detach-sign --local-user release@kutu.so "$f"
+          done
       - name: smoke test the ISO in QEMU
         run: ./scripts/smoke-test.sh
       - name: collect artifacts
         run: |
           mkdir -p release/repo/x86_64
           cp out/*.iso out/*.sha256 release/
-          cp work/repo/*.pkg.tar.zst work/repo/kutu.db.tar.zst release/repo/x86_64/ 2>/dev/null || cp work/repo/* release/repo/x86_64/
+          cp work/repo/*.pkg.tar.zst work/repo/kutu.db.tar.zst release/repo/x86_64/
+          cp work/repo/*.sig release/repo/x86_64/ 2>/dev/null || true
           (cd release && sha256sum kutu-os-*.iso > SHA256SUMS)
       - uses: actions/upload-artifact@v4
         with:
@@ -41,20 +71,34 @@ jobs:
           git config user.name "kutu release bot"
           git config user.email "release@kutu.so"
           cp README.md docs/README.md
+          sed -i 's|(docs/|(./|g; s|\[docs/|[|g' docs/README.md
           mkdir -p docs/repo/x86_64
           rm -f docs/repo/x86_64/*
           cp release/repo/x86_64/. docs/repo/x86_64/
           cp docs/repo/x86_64/kutu.db.tar.zst docs/repo/x86_64/kutu.db 2>/dev/null || true
-          git add docs/repo docs/README.md
+          git add -f docs/repo docs/README.md
           git diff --cached --quiet && echo "repo unchanged" || git commit -m "repo: publish packages for ${GITHUB_REF_NAME}"
-          git push origin HEAD:master || echo "warn: repo push failed (master moved?) — repo not published"
+          git push origin HEAD:master
       - name: trigger pages build (GITHUB_TOKEN pushes don't trigger workflows)
         run: |
           curl -fsS -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/kutuso/os/pages/builds \
-            || echo "warn: pages build trigger failed; site deploys on next master push"
+            https://api.github.com/repos/kutuso/os/pages/builds
+      - name: verify the published repo before announcing the release
+        run: |
+          base="https://kutuso.github.io/os/repo/x86_64"
+          ok=0
+          for i in $(seq 1 60); do
+            if curl -fsSL -o /dev/null "$base/kutu.db"; then ok=1; break; fi
+            sleep 10
+          done
+          [ "$ok" = 1 ] || { echo "ERROR: repo db never appeared at $base/kutu.db"; exit 1; }
+          for f in release/repo/x86_64/*.pkg.tar.zst; do
+            curl -fsSL -o /dev/null "$base/$(basename "$f")" \
+              || { echo "ERROR: package not published: $(basename "$f")"; exit 1; }
+          done
+          echo "published repo verified"
       - name: create github release with ISO
         uses: softprops/action-gh-release@v2
         with:

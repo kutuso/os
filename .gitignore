@@ -51,3 +51,7 @@ src/
 *.tar.gz
 *.tar.xz
 *.tar.zst
+
+# published pacman repo artifacts (release workflow commits these despite
+# the generic package/tarball patterns above)
+!docs/repo/**
