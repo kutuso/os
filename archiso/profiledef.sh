@@ -5,7 +5,7 @@ iso_name="kutu-os"
 iso_label="KUTU_OS_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
 iso_publisher="kutu.so <https://kutu.so>"
 iso_application="kutu OS - The RAM-sipping Linux desktop"
-iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)"
+iso_version="${KUTU_ISO_VERSION:-$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)}"
 install_dir="kutu"
 buildmodes=('iso')
 bootmodes=('bios.syslinux'

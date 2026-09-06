@@ -6,11 +6,14 @@ cd "$(dirname "$0")/.."
 if [ "${KUTU_IN_DOCKER:-0}" != 1 ]; then
   command -v docker >/dev/null 2>&1 || { echo "docker required (or set KUTU_IN_DOCKER=1 inside an arch container)"; exit 1; }
   # --privileged: mkarchiso/pacstrap must mount proc/sys/dev into the build chroot
+  ENV_FLAGS=(-e KUTU_IN_DOCKER=1)
+  [ -n "${KUTU_ISO_VERSION:-}" ] && ENV_FLAGS+=(-e "KUTU_ISO_VERSION=$KUTU_ISO_VERSION")
+  [ -n "${SOURCE_DATE_EPOCH:-}" ] && ENV_FLAGS+=(-e "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH")
   exec docker run --rm --privileged -v "$PWD:/w" -v kutu-pacman-cache:/var/cache/pacman/pkg \
-    -w /w -e KUTU_IN_DOCKER=1 archlinux:base-devel bash scripts/build.sh
+    -w /w "${ENV_FLAGS[@]}" archlinux:base-devel bash scripts/build.sh
 fi
 
-VERSION="$(date +%Y.%m.%d)"
+VERSION="${KUTU_ISO_VERSION:-$(date +%Y.%m.%d)}"
 mkdir -p out
 
 ./scripts/build-packages.sh
@@ -20,10 +23,11 @@ rm -rf work/profile work/chroot
 cp -r archiso "$PROFILE_TMP"
 sed -i "s|file://KUTU_REPO_PLACEHOLDER|file://$PWD/work/repo|" "$PROFILE_TMP/pacman.conf"
 
-pacman -Sy --noconfirm --needed archiso >/dev/null 2>&1
+pacman -Sy --noconfirm --needed archiso >/dev/null
 mkarchiso -v -w work/chroot -o out "$PROFILE_TMP"
 
 ISO="out/kutu-os-$VERSION-x86_64.iso"
 echo "built: $ISO"
+[ -f "$ISO" ] || { echo "ERROR: mkarchiso produced a different filename than expected (KUTU_ISO_VERSION=$VERSION)" >&2; ls -l out/; exit 1; }
 ( cd out && sha256sum "kutu-os-$VERSION-x86_64.iso" > "kutu-os-$VERSION-x86_64.iso.sha256" )
 ls -lh "$ISO"
