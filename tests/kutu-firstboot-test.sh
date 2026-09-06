@@ -18,4 +18,10 @@ printf 'MemTotal: 67108864 kB\n' > "$tmp/meminfo"
 KUTU_ROOT="$tmp/root3" KUTU_MEMINFO="$tmp/meminfo" packages/kutu-base/usr/bin/kutu-firstboot
 grep -q '^MODE=performance$' "$tmp/root3/etc/kutu/memory.conf"
 grep -q '^KUTU_MEMORY_HIGH_PCT=70$' "$tmp/root3/etc/kutu/apps.d/firefox.conf"
+printf 'MemTotal: 6291456 kB\n' > "$tmp/meminfo"
+KUTU_ROOT="$tmp/root4" KUTU_MEMINFO="$tmp/meminfo" packages/kutu-base/usr/bin/kutu-firstboot
+grep -q '^MODE=balanced$' "$tmp/root4/etc/kutu/memory.conf"
+printf 'MemTotal: 6290432 kB\n' > "$tmp/meminfo"
+KUTU_ROOT="$tmp/root5" KUTU_MEMINFO="$tmp/meminfo" packages/kutu-base/usr/bin/kutu-firstboot
+grep -q '^MODE=saver$' "$tmp/root5/etc/kutu/memory.conf"
 echo "kutu-firstboot tests: PASS"

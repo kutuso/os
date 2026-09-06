@@ -3,6 +3,9 @@ set -euo pipefail
 R="${KUTU_ROOT:-}"
 MARKER="$R/var/lib/kutu/firstboot-done"
 [ -e "$MARKER" ] && exit 0
+if [ -z "$R" ] && [ -x /usr/bin/kutu-check-kernel ]; then
+  /usr/bin/kutu-check-kernel || echo "kutu-firstboot: WARNING: kernel feature check failed; the memory stack may be degraded (see kutu-check-kernel)"
+fi
 TOTAL_KB=$(awk '/MemTotal/ {print $2}' "${KUTU_MEMINFO:-/proc/meminfo}")
 TOTAL_MB=$(( TOTAL_KB / 1024 ))
 if [ "$TOTAL_MB" -lt 6144 ]; then MODE=saver

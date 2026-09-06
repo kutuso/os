@@ -1,7 +1,7 @@
 [Unit]
 Description=kutu OS first-boot calibration
-After=multi-user.target
 ConditionPathExists=!/var/lib/kutu/firstboot-done
+Before=display-manager.service graphical.target
 
 [Service]
 Type=oneshot
