@@ -35,7 +35,7 @@ expect {
   -re {\]# $} {}
   timeout { puts "TIMEOUT waiting for serial root shell"; exit 1 }
 }
-send -- {echo SMOKE:zswap:$(cat /sys/module/zswap/parameters/compressor):$(cat /sys/module/zswap/parameters/enabled):$(cat /sys/module/zswap/parameters/shrinker_enabled):$(cat /sys/module/zswap/parameters/zpool 2>/dev/null || echo default)}
+send -- {echo SMOKE:zswap:$(cat /sys/module/zswap/parameters/compressor):$(cat /sys/module/zswap/parameters/enabled):$(cat /sys/module/zswap/parameters/shrinker_enabled):$(cat /sys/module/zswap/parameters/zpool 2>/dev/null || echo default):$(cat /sys/module/zswap/parameters/max_pool_percent)}
 send "\r"
 expect {\]# $}
 send -- {echo SMOKE:mglru:$(cat /sys/kernel/mm/lru_gen/enabled):$(cat /sys/kernel/mm/lru_gen/min_ttl_ms)}
@@ -54,18 +54,6 @@ send -- {echo SMOKE:run:$(kutu-run --dry-run firefox /bin/true | grep -c MemoryH
 send "\r"
 expect {\]# $}
 send -- {echo SMOKE:sessions:$(loginctl --no-legend | wc -l); loginctl --no-legend}
-send "\r"
-expect {\]# $}
-send -- {ls -la /sys/kernel/mm/damon/admin/ /sys/module/zswap/parameters/ | head -25}
-send "\r"
-expect {\]# $}
-send -- {echo 1 > /sys/kernel/mm/damon/admin/nr_kdamonds; echo SMOKE:damon-write:$?; dmesg | tail -3}
-send "\r"
-expect {\]# $}
-send -- {printf zsmalloc > /sys/module/zswap/parameters/zpool 2>&1; echo SMOKE:zpool-write:$?; cat /sys/module/zswap/parameters/zpool}
-send "\r"
-expect {\]# $}
-send -- {bash -x /usr/bin/kutu-damon start 2>&1 | tail -6; echo SMOKE:damon-dbg-done}
 send "\r"
 expect {\]# $}
 send -- {[ -f /home/kutu/Desktop/install-kutu-os.desktop ] && echo SMOKE:launcher:ok || echo SMOKE:launcher:fail; [ -f /usr/share/backgrounds/xfce/kutu-default.svg ] && echo SMOKE:wallpaper:ok || echo SMOKE:wallpaper:fail}
@@ -104,6 +92,7 @@ ckr() {
 }
 
 ck "zswap params" "SMOKE:zswap:zstd:Y:Y"
+ckr "zswap pool cap" "SMOKE:zswap:zstd:Y:Y:(default|zsmalloc):35"
 ckr "MGLRU" "SMOKE:mglru:(0x0007|7):1000"
 ck "DAMON state" "SMOKE:damon:on"
 for s in systemd-oomd kutu-memory-early kutu-damon kutu-firstboot NetworkManager lightdm; do
