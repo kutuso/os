@@ -247,3 +247,30 @@ Each milestone ends in a tagged, released ISO.
 | gh-pages repo bandwidth/limits | Packages are small; ISO never served from gh-pages |
 | Unsigned repo window (if D9 slips) | Time-boxed; never past v1 |
 | Trim-storms / oomd killing wrong things | Hysteresis + jitter (§9); ManagedOOMPreference avoid rules (§7); tested in smoke suite |
+
+## 20. Amendments (2026-09-06, post-M1 audit)
+
+Locked Tier-0 values (§6–§7) are unchanged. The following implementation
+deviations are formally accepted:
+
+1. **Swap sizing**: `initialSwapChoice: suspend` (RAM-sized, hibernation-
+   capable) replaces the §5 `clamp(RAM, 4GiB, 16GiB)` formula. Hibernation
+   on laptops was judged worth the disk cost; small-SSD users can pick a
+   smaller swap choice in the installer.
+2. **zswap.zpool cmdline dropped**: kernels ≥6.10 removed the param (zsmalloc
+   is baked in); `kutu-memory-early` handles the pre-6.10 runtime fallback.
+   §6's cmdline no longer lists `zswap.zpool=zsmalloc`.
+3. **oomd monitoring moved to `user@.service`** (root-owned, per-user)
+   instead of `user.slice`, with corrected property names
+   (`ManagedOOMMemoryPressureLimit=`, `DefaultMemoryPressureDurationSec=`).
+   Same 50%/90% values. `ManagedOOMPreference=avoid` is honored for
+   root-owned units only (systemd limitation) — session-service protection
+   is best-effort.
+4. **D3 amended — installer autologin OFF + password required (min 8)**:
+   empty-password autologin admin accounts are an unacceptable physical-
+   access risk. Live-session autologin remains.
+5. **M1 modes are ceiling-only** (Firefox + user-session MemoryHigh);
+   full per-mode policy sets arrive with M2 `kutu-memoryd`.
+6. **Installed initramfs** is derived by Calamares `initcpiocfg` from the
+   real partition layout (block/filesystems/encrypt/lvm2/resume/microcode),
+   not a hand-written hook list.
