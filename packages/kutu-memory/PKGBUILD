@@ -1,6 +1,6 @@
 pkgname=kutu-memory
 pkgver=0.1.0
-pkgrel=3
+pkgrel=4
 pkgdesc="kutu OS Tier-0 memory stack: zswap, MGLRU, journald, I/O scheduler tuning"
 arch=(any)
 url="https://kutu.so"
@@ -15,9 +15,8 @@ package() {
   install -Dm644 "$startdir/journald/99-kutu.conf" -t "$pkgdir/etc/systemd/journald.conf.d/"
   install -Dm644 "$startdir/udev/60-kutu-ioschedulers.rules" -t "$pkgdir/usr/lib/udev/rules.d/"
   install -Dm644 "$startdir/oomd/oomd.conf.d/99-kutu.conf" -t "$pkgdir/etc/systemd/oomd.conf.d/"
-  install -Dm644 "$startdir/oomd/user.slice.d/50-kutu-oomd.conf" -t "$pkgdir/etc/systemd/system/user.slice.d/"
-  install -Dm644 "$startdir/oomd/avoid/pipewire.service.d/99-kutu-avoid.conf" -t "$pkgdir/etc/systemd/system/pipewire.service.d/"
-  install -Dm644 "$startdir/oomd/avoid/wireplumber.service.d/99-kutu-avoid.conf" -t "$pkgdir/etc/systemd/system/wireplumber.service.d/"
-  install -Dm644 "$startdir/oomd/avoid/xdg-desktop-portal.service.d/99-kutu-avoid.conf" -t "$pkgdir/etc/systemd/system/xdg-desktop-portal.service.d/"
-  install -Dm755 "$startdir/usr/bin/kutu-reset" -t "$pkgdir/usr/bin/"
+  install -Dm644 "$startdir/oomd/user@.service.d/50-kutu-oomd.conf" -t "$pkgdir/etc/systemd/system/user@.service.d/"
+  install -Dm644 "$startdir/oomd/avoid/pipewire.service.d/99-kutu-avoid.conf" -t "$pkgdir/usr/lib/systemd/user/pipewire.service.d/"
+  install -Dm644 "$startdir/oomd/avoid/wireplumber.service.d/99-kutu-avoid.conf" -t "$pkgdir/usr/lib/systemd/user/wireplumber.service.d/"
+  install -Dm644 "$startdir/oomd/avoid/xdg-desktop-portal.service.d/99-kutu-avoid.conf" -t "$pkgdir/usr/lib/systemd/user/xdg-desktop-portal.service.d/"
 }
