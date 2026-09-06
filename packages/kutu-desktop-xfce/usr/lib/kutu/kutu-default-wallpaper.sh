@@ -10,6 +10,7 @@ command -v xfconf-query >/dev/null 2>&1 || exit 0
 [ -f "$WALLPAPER" ] || exit 0
 
 mkdir -p "$(dirname "$MARKER")"
+applied=0
 for output in $(xrandr --current | awk '/ connected/ {print $1}'); do
   prop="/backdrop/screen0/monitor${output}/workspace0/last-image"
   if xfconf-query -c xfce4-desktop -p "$prop" >/dev/null 2>&1; then
@@ -17,5 +18,8 @@ for output in $(xrandr --current | awk '/ connected/ {print $1}'); do
   else
     xfconf-query -c xfce4-desktop -n -t string -p "$prop" -s "$WALLPAPER"
   fi
+  applied=$(( applied + 1 ))
 done
-touch "$MARKER"
+if [ "$applied" -gt 0 ]; then
+  touch "$MARKER"
+fi

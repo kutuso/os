@@ -67,4 +67,14 @@ env -u XDG_CONFIG_HOME "$SCRIPT"
 grep -q '^set:/backdrop/screen0/monitorVirtual-1/workspace0/last-image$' "$STUB_LOG"
 [ -f "$HOME/.config/kutu/wallpaper-applied" ] || { echo "FAIL: marker not re-created"; exit 1; }
 
+cat > "$tmp/bin/xrandr" <<'EOF'
+#!/usr/bin/env bash
+echo "DP-1 disconnected 2560x1440+0+0"
+EOF
+rm -f "$HOME/.config/kutu/wallpaper-applied"
+: > "$STUB_LOG"
+env -u XDG_CONFIG_HOME "$SCRIPT"
+[ ! -f "$HOME/.config/kutu/wallpaper-applied" ] || { echo "FAIL: marker created with no connected outputs"; exit 1; }
+[ ! -s "$STUB_LOG" ] || { echo "FAIL: set wallpaper with no connected outputs"; exit 1; }
+
 echo "kutu-default-wallpaper tests: PASS"
