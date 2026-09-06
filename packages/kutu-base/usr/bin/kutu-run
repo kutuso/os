@@ -17,6 +17,7 @@ if [ -r "$CONF" ]; then
   [ -n "${KUTU_CPU_WEIGHT:-}" ] && DECL+=(-p "CPUWeight=${KUTU_CPU_WEIGHT}")
   [ "${KUTU_MEMORY_MERGE:-0}" = "1" ] && DECL+=(-p "MemoryMerge=yes")
 fi
-CMD=(systemd-run --user --scope --unit="app-${PROFILE}-%n" "${DECL[@]+"${DECL[@]}"}" "$@")
+UPROFILE="${PROFILE//[^a-zA-Z0-9._-]/_}"
+CMD=(systemd-run --user --scope --expand-environment=no --unit="app-${UPROFILE}-$$-${RANDOM}" "${DECL[@]+"${DECL[@]}"}" "$@")
 if [ "$DRY" = 1 ]; then printf '%q ' "${CMD[@]}"; echo; exit 0; fi
 exec "${CMD[@]}"
