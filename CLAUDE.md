@@ -20,6 +20,7 @@ tuning as config packages; a policy daemon (kutu-memoryd) and pressure API
 |---|---|
 | `kutu-memory` | Tier-0 tuning: sysctl.d, grub.d zswap cmdline, `kutu-memory-early` (zpool+MGLRU), `kutu-damon`, oomd configs, `kutu-reset` |
 | `kutu-base` | os-release, `kutu-firstboot` (RAM-based mode calibration), `kutu-run` (per-app cgroup launcher), `kutu-check-kernel` |
+| `kutu-doctor` | `kutu-doctor` CLI: live memory-health dashboard, `check` prober, live mode application (vendored from the sibling `../doctor` repo) |
 | `kutu-desktop-xfce` | curated XFCE set, kutu theming (branding/), lightdm config, Firefox autoconfig + kutu-run wrapping (via alpm hook) |
 | `kutu-calamares-config` | /etc/calamares settings + branding; offline install via unpackfs, then kernel copy + initcpiocfg/initcpio-built initramfs (mkinitcpio) and grub; mandatory post-install cleanup with assertions |
 | `kutu-keyring` | pacman keyring (empty until a signing key exists — see docs/RELEASE.md) |
