@@ -50,6 +50,9 @@ expect {\]# $}
 send -- {kutu-check-kernel; echo SMOKE:ck:$?}
 send "\r"
 expect {\]# $}
+send -- {kutu-doctor version; echo SMOKE:doctor:$(kutu-doctor check >/dev/null 2>&1; echo $?)}
+send "\r"
+expect {\]# $}
 send -- {echo SMOKE:run:$(kutu-run --dry-run firefox /bin/true | grep -c MemoryHigh)}
 send "\r"
 expect {\]# $}
@@ -99,6 +102,7 @@ for s in systemd-oomd kutu-memory-early kutu-damon kutu-firstboot NetworkManager
   ck "service $s" "SMOKE:svc:$s:active"
 done
 ck "kutu-check-kernel" "SMOKE:ck:0"
+ck "kutu-doctor" "SMOKE:doctor:0"
 ckr "kutu-run" "SMOKE:run:[1-9]"
 ckr "XFCE session" "SMOKE:xfce:[1-9]"
 ck "desktop installer launcher" "SMOKE:launcher:ok"
