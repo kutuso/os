@@ -1,28 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>kutu OS — docs</title>
-  <meta name="description" content="kutu OS documentation: memory stack, building, architecture and release process.">
+  <meta name="description" content="kutu OS documentation: install guide, memory stack, building, architecture and release process.">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/dark.css">
   <link rel="icon" href="logo.png">
   <style>
-    body { font-family: system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; }
+    :root {
+      --base-font-size: 16px;
+      --theme-color: #ff9900;
+    }
+    body {
+      font-family: system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background: #0b0e14;
+    }
     .app-name-link img { max-height: 96px; }
-    .sidebar ul li a { color: #b0bacb; }
-    .sidebar ul li.active > a { color: #ff9900; }
-    .sidebar .search input { background: #121722; border-color: #232c3f; }
-    a, .anchor { color: #ffb84d; }
-    .markdown-section a { color: #ff9900; }
-    tr:nth-child(2n) { background: #121722; }
+    .sidebar {
+      background: #0d1119;
+      border-right: 1px solid #232c3f;
+      padding-top: 56px;
+    }
+    .sidebar .sidebar-nav ul li a { color: #b0bacb; }
+    .sidebar .sidebar-nav ul li.active > a { color: #ff9900; }
+    .sidebar ul li strong { color: #5f6c84; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .sidebar .search { margin: 14px 12px 6px; }
+    .sidebar .search input {
+      background: #121722; border-color: #232c3f; color: #dbe2ee;
+      border-radius: 8px; font-size: 0.85rem;
+    }
+    .sidebar .search .clear-button { color: #8b96ab; }
+    .search .results-panel { color: #b0bacb; }
+    .search .matching-post { border-color: #232c3f; }
+    .content, .markdown-section { background: #0b0e14; }
+    .markdown-section { max-width: 800px; }
+    .markdown-section h1, .markdown-section h2, .markdown-section h3,
+    .markdown-section h4, .markdown-section strong { color: #e8edf5; }
+    .markdown-section p, .markdown-section li { color: #c3cbd9; }
+    .markdown-section a { color: #ffb84d; }
+    .markdown-section h1 { border-bottom: 1px solid #232c3f; }
+    .markdown-section h2 { border-bottom: 1px solid #1a2233; }
     .markdown-section code, .markdown-section pre { background: #121722; }
+    .markdown-section pre { border: 1px solid #232c3f; border-radius: 10px; }
+    .markdown-section code { color: #ffb84d; }
+    tr:nth-child(2n) { background: #121722; }
+    th, td { border-color: #232c3f; }
     .docsify-copy-code-button { background: #1c2434; }
+    blockquote { border-color: #ff9900; background: rgba(255, 153, 0, 0.06); }
+    .home-link {
+      position: fixed; top: 12px; right: 16px; z-index: 99;
+      color: #8b96ab; font-size: 0.9rem; text-decoration: none;
+      border: 1px solid #232c3f; background: rgba(13, 17, 25, 0.85);
+      padding: 6px 12px; border-radius: 8px; backdrop-filter: blur(8px);
+    }
+    .home-link:hover { color: #dbe2ee; border-color: #3a465e; }
   </style>
 </head>
 <body>
-  <a href="index.html" style="position:fixed;top:12px;right:16px;z-index:99;color:#8b96ab;font-size:.9rem;text-decoration:none">&#8592; kutu OS home</a>
+  <a class="home-link" href="index.html">&#8592; kutu OS home</a>
   <div id="app"></div>
   <script>
     window.$docsify = {
@@ -31,10 +68,19 @@
       loadSidebar: true,
       homepage: 'README.md',
       subMaxLevel: 3,
-      search: 'auto'
+      notFoundPage: 'README.md',
+      search: {
+        maxAge: 86400000,
+        paths: 'auto',
+        placeholder: 'Search the docs',
+        noData: 'No results',
+        depth: 3
+      },
+      plugins: []
     }
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify@4/plugins/search.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-copy-code@2"></script>
 </body>
 </html>
