@@ -74,6 +74,7 @@ calamares
 kutu-keyring
 kutu-base
 kutu-memory
+kutu-doctor
 kutu-desktop-xfce
 kutu-calamares-config
 yay
