@@ -60,11 +60,13 @@ exists and M2 ships. Tag from `master` only.
   tarball URL + `sha256sums` (published in the release notes), delete the
   cached package, `make test` (20 min compile), `make smoke`. ckbcomp comes
   from Debian `console-setup`; update alongside, rarely needed.
-- **Vendored kutu-doctor:** `packages/kutu-doctor/src` is a copy of the
-  sibling repo `../doctor` (the real source of truth, with its own tests and
-  QEMU harness). To update: `rsync -a --delete ../doctor/src/kutu_doctor/
-  packages/kutu-doctor/src/kutu_doctor/ --exclude __pycache__`, bump the
-  package `pkgrel`, `make test`.
+- **Vendored kutu-doctor:** `packages/kutu-doctor/kutu_doctor` is a copy of
+  the sibling repo `../doctor` (the real source of truth, with its own tests
+  and QEMU harness). To update: `rsync -a --delete --exclude __pycache__
+  ../doctor/src/kutu_doctor/ packages/kutu-doctor/kutu_doctor/`, bump the
+  package `pkgrel`, `make test`. Never place vendored sources under `src/`
+  or `pkg/` — those are gitignored makepkg build directories (that mistake
+  once shipped a package that only built on the author's machine).
 - **Repo hygiene:** gh-pages `repo/x86_64/` grows monotonically today.
   When it passes ~500 MB, prune old package versions keeping the newest 3
   of each (`repo-add` rebuilds `kutu.db.tar.zst` from what remains).
