@@ -1,6 +1,6 @@
 pkgname=yay
 pkgver=13.0.1
-pkgrel=1
+pkgrel=2
 pkgdesc="Yet another yogurt: pacman wrapper and AUR helper written in Go"
 arch=(x86_64)
 url="https://github.com/Jguer/yay"
@@ -14,7 +14,7 @@ build() {
   cd "$pkgname-$pkgver"
   export CGO_LDFLAGS="${LDFLAGS}"
   export GOFLAGS="-buildmode=pie -trimpath -mod=readonly -modcacherw"
-  go build -v -ldflags "-X main.yayVersion=${pkgver} -s -w" -o yay
+  go build -v -buildvcs=false -ldflags "-X main.yayVersion=${pkgver} -s -w" -o yay
 }
 
 package() {
