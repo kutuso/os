@@ -54,7 +54,7 @@ jobs:
           cp work/repo/*.pkg.tar.zst work/repo/kutu.db.tar.zst release/repo/x86_64/
           cp work/repo/*.sig release/repo/x86_64/ 2>/dev/null || true
           (cd release && sha256sum kutu-os-*.iso > SHA256SUMS)
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: kutu-release
           path: release/
