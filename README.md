@@ -41,10 +41,13 @@ Download the latest ISO from
 
 - **M1 (current):** tuned OS + installer + CI, smoke-tested end to end in
   QEMU on every release
-- **M2:** `kutu-doctor` (memory health dashboard) and `kutu-memoryd`
-  (PSI-driven policy daemon with a user-visible aggressiveness dial)
+- **M2 (in flight):** `kutu-doctor` — the live memory-health dashboard and
+  mode switcher — is [built and shipped](docs/DOCTOR.md); `kutu-memoryd`
+  (PSI-driven policy daemon with a user-visible aggressiveness dial) is next
 - **M3:** `libmempressure` — a Linux answer to Android's onTrimMemory, so
-  apps can shed memory gracefully under pressure instead of dying
+  apps can shed memory gracefully under pressure instead of dying — is
+  [built and tested](docs/LIBMEMPRESSURE.md); `mempressured` and app
+  integration follow
 
 Design spec: [superpowers/specs/2026-08-27-ramageddon-pivot-design.md](superpowers/specs/2026-08-27-ramageddon-pivot-design.md)
 

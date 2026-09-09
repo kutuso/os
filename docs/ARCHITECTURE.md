@@ -87,3 +87,10 @@ for rationale on: package-first architecture, stock kernel (no custom build
 in v1), zswap over zram, XFCE on X11, systemd as sole cgroup writer, escape
 hatches, and the M1/M2/M3 roadmap (M2: kutu-doctor + kutu-memoryd; M3:
 libmempressure + mempressured).
+
+## Ecosystem
+
+kutu OS has two sibling projects with their own repositories and tests:
+[kutu-doctor](DOCTOR.md) (the control CLI) and
+[libmempressure](LIBMEMPRESSURE.md) (pressure events for applications).
+The full map lives in [COMPONENTS.md](COMPONENTS.md).
