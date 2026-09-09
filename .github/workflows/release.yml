@@ -17,7 +17,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: derive version + epoch from the tag commit
         run: |
           echo "KUTU_ISO_VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
@@ -63,7 +63,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/download-artifact@v4
         with:
           name: kutu-release

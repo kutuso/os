@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: install git
         run: pacman -Sy --noconfirm git
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: lint + unit tests + package builds
         env:
           KUTU_IN_DOCKER: "1"
