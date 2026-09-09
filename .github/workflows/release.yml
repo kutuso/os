@@ -14,6 +14,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - name: derive version + epoch from the tag commit
@@ -71,7 +73,7 @@ jobs:
           git config user.name "kutu release bot"
           git config user.email "release@kutu.so"
           cp README.md docs/README.md
-          sed -i 's|(docs/|(./|g; s|\[docs/|[|g' docs/README.md
+          sed -i 's|(docs/|(./|g; s|\[docs/|[|g; s|(superpowers/|(https://github.com/kutuso/os/blob/master/superpowers/|g' docs/README.md
           mkdir -p docs/repo/x86_64
           rm -f docs/repo/x86_64/*
           cp release/repo/x86_64/. docs/repo/x86_64/
