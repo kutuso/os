@@ -1,13 +1,13 @@
 pkgname=kutu-doctor
 pkgver=0.1.0
-pkgrel=1
+pkgrel=2
 pkgdesc="kutu OS memory-health dashboard and control CLI"
 arch=(any)
 url="https://kutu.so"
 license=(MIT)
 depends=(python python-typer python-rich)
 package() {
-  install -Dm644 "$startdir"/src/kutu_doctor/*.py -t "$pkgdir/usr/lib/kutu-doctor/kutu_doctor/"
+  install -Dm644 "$startdir"/kutu_doctor/*.py -t "$pkgdir/usr/lib/kutu-doctor/kutu_doctor/"
   install -Dm644 "$startdir/main.py" -t "$pkgdir/usr/lib/kutu-doctor/"
   install -Dm755 "$startdir/bin/kutu-doctor" -t "$pkgdir/usr/bin/"
   install -Dm644 "$startdir/LICENSE" -t "$pkgdir/usr/share/licenses/kutu-doctor/"
