@@ -2,3 +2,22 @@ post_install() {
   systemctl enable kutu-firstboot.service kutu-check-kernel.service 2>/dev/null || true
   ln -sfn /usr/lib/kutu/os-release /etc/os-release
 }
+
+post_upgrade() {
+  post_install
+}
+
+pre_remove() {
+  systemctl disable kutu-firstboot.service kutu-check-kernel.service 2>/dev/null || true
+}
+
+post_remove() {
+  if [ -e /usr/lib/os-release ]; then
+    ln -sfn /usr/lib/os-release /etc/os-release
+  else
+    rm -f /etc/os-release
+  fi
+  rm -f /etc/systemd/system/user.slice.d/50-kutu.conf
+  rm -f /etc/kutu/apps.d/firefox.conf
+  rm -f /var/lib/kutu/firstboot-done
+}
