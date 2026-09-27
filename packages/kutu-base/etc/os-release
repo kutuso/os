@@ -5,4 +5,4 @@ ID_LIKE=arch
 BUILD_ID=rolling
 ANSI_COLOR="38;2;255;153;0"
 HOME_URL="https://kutu.so"
-SUPPORT_URL="https://github.com/kutu-so/os/issues"
+SUPPORT_URL="https://github.com/kutuso/os/issues"
