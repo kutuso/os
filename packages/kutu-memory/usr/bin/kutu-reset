@@ -20,7 +20,6 @@ EOF
 [ -e /sys/kernel/mm/lru_gen/min_ttl_ms ] && printf '%s' 0 > /sys/kernel/mm/lru_gen/min_ttl_ms
 [ -e /sys/module/zswap/parameters/enabled ] && printf '%s' Y > /sys/module/zswap/parameters/enabled
 [ -e /sys/module/zswap/parameters/max_pool_percent ] && printf '%s' 20 > /sys/module/zswap/parameters/max_pool_percent
-[ -e /sys/module/zswap/parameters/zpool ] && printf '%s' '' > /sys/module/zswap/parameters/zpool 2>/dev/null || true
 
 disable_dropin() {
   if [ -f "$1" ]; then
@@ -32,6 +31,9 @@ disable_dropin() {
 disable_dropin /etc/systemd/system/user@.service.d/50-kutu-oomd.conf
 disable_dropin /etc/systemd/oomd.conf.d/99-kutu.conf
 disable_dropin /etc/systemd/journald.conf.d/99-kutu.conf
+disable_dropin /usr/lib/systemd/user/pipewire.service.d/99-kutu-avoid.conf
+disable_dropin /usr/lib/systemd/user/wireplumber.service.d/99-kutu-avoid.conf
+disable_dropin /usr/lib/systemd/user/xdg-desktop-portal.service.d/99-kutu-avoid.conf
 if disable_dropin /usr/lib/udev/rules.d/60-kutu-ioschedulers.rules; then
   udevadm control --reload 2>/dev/null || true
 fi
