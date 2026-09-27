@@ -19,13 +19,14 @@ fi
 
 ISO="${EXPECT_ISO:-$(latest_iso)}"
 [ -n "$ISO" ] || { echo "no ISO found"; exit 1; }
+export EXPECT_ISO="$ISO"
 pacman -Sy --noconfirm --needed qemu-system-x86 qemu-system-x86-firmware expect >/dev/null 2>&1
 
 KVM_ARGS=""
 if [ -w /dev/kvm ]; then KVM_ARGS="-enable-kvm -cpu host"; fi
 export KVM_ARGS
 mkdir -p work
-export SMOKE_LOG=/w/work/smoke.log
+export SMOKE_LOG="$PWD/work/smoke.log"
 
 expect <<'EOF'
 set timeout 1800
