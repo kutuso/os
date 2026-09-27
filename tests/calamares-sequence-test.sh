@@ -110,6 +110,7 @@ uconf="$CONF_DIR/modules/users.conf"
 grep -q "^sudoersGroup: wheel" "$uconf" || { echo "FAIL: users.conf must set sudoersGroup: wheel (the users module writes /etc/sudoers.d/10-installer from it; arch ships %wheel commented out, so without it the installed user cannot sudo)"; fail=1; }
 grep -q "^doAutologin: false" "$uconf" || { echo "FAIL: users.conf must default autologin off (empty-password autologin admin risk)"; fail=1; }
 grep -q "minLength: 8" "$uconf" || { echo "FAIL: users.conf must enforce a minimum password length"; fail=1; }
+grep -Eq "^ *forbidden_names:.*\bkutu\b" "$uconf" || { echo "FAIL: users.conf must forbid the 'kutu' login name; the live account is copied into the target and useradd kutu fails after partitioning"; fail=1; }
 
 mountconf="$CONF_DIR/modules/mount.conf"
 [ -f "$mountconf" ] || { echo "FAIL: missing mount.conf; the mount module would skip /dev,/proc,/sys binds and grub-install fails in the chroot"; fail=1; }
