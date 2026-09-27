@@ -9,6 +9,7 @@ post_install() {
 
 post_upgrade() {
   post_install
+  systemctl try-restart kutu-damon.service systemd-oomd.service 2>/dev/null || true
 }
 
 pre_remove() {
