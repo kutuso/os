@@ -660,8 +660,10 @@
         <p style="margin:0">Add to <code>/etc/pacman.conf</code>:</p>
         <pre><span class="c"># the kutu repository</span>
 <span class="k">[kutu]</span>
+<span class="c"># unsigned until v1 (spec decision D9)</span>
+SigLevel = Never
 Server = https://kutuso.github.io/os/repo/$arch/</pre>
-        <p style="margin:14px 0 0">Then <code>pacman -Sy kutu-memory</code> &mdash; or grab the ISO for the full desktop.</p>
+        <p style="margin:14px 0 0">Then <code>pacman -Syu kutu-memory</code> &mdash; or grab the ISO for the full desktop.</p>
       </div>
     </div>
   </div>

@@ -106,11 +106,14 @@ Already on Arch? Add the kutu repo to `/etc/pacman.conf`:
 
 ```ini
 [kutu]
+# packages are unsigned until v1 (spec decision D9); this line is required
+SigLevel = Never
 Server = https://kutuso.github.io/os/repo/$arch/
 ```
 
-Then `sudo pacman -Sy kutu-memory` for the kernel-level stack, or
-`kutu-desktop-xfce` for the curated desktop on top.
+Then `sudo pacman -Syu kutu-memory` for the kernel-level stack, or
+`kutu-desktop-xfce` for the curated desktop on top (always a full
+upgrade — partial `-Sy` installs are unsupported on Arch).
 
 ## If something goes wrong
 
