@@ -1,6 +1,6 @@
 pkgname=kutu-memory
 pkgver=0.1.0
-pkgrel=5
+pkgrel=6
 pkgdesc="kutu OS Tier-0 memory stack: zswap, MGLRU, journald, I/O scheduler tuning"
 arch=(any)
 url="https://kutu.so"

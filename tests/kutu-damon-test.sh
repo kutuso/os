@@ -41,13 +41,23 @@ assert "$S/watermarks/mid" 100
 assert "$S/watermarks/high" 150
 assert "$K/state" on
 "$BIN" status | grep -q on
+KUTU_MEMINFO="$tmp/meminfo" KUTU_IOMEM="$tmp/nonexistent" "$BIN" start | grep -q 'already on'
+assert "$K/state" on
 "$BIN" stop
 assert "$K/state" off
+assert "kdamonds/nr_kdamonds" 1
 
 printf '00000000-0009fbff : System RAM\n00100000-3fffffff : System RAM\n' > "$tmp/iomem"
 KUTU_MEMINFO="$tmp/meminfo" KUTU_IOMEM="$tmp/iomem" "$BIN" start
 assert "$C/targets/0/regions/nr_regions" 2
 assert "$C/targets/0/regions/0/end" 654336
+assert "$C/targets/0/regions/1/start" 1048576
+"$BIN" stop
+
+printf '00000000-00000fff : System RAM\n00001000-00001fff : System RAM\n00100000-3fffffff : System RAM\n' > "$tmp/iomem"
+KUTU_MEMINFO="$tmp/meminfo" KUTU_IOMEM="$tmp/iomem" "$BIN" start
+assert "$C/targets/0/regions/nr_regions" 2
+assert "$C/targets/0/regions/0/end" 8192
 assert "$C/targets/0/regions/1/start" 1048576
 "$BIN" stop
 echo "kutu-damon tests: PASS"

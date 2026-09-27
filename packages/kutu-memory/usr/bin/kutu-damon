@@ -11,9 +11,16 @@ start() {
     echo "kutu-damon: DAMON sysfs unavailable; skipping (kernel without CONFIG_DAMON_SYSFS)"
     exit 0
   fi
+  if [ "$(cat "$KD/state" 2>/dev/null || echo off)" = "on" ]; then
+    echo "kutu-damon: kdamond 0 already on (kutu or another admin); leaving it alone"
+    exit 0
+  fi
   KDS="$DAMON_ROOT/kdamonds"
-  printf '%s' 0 > "$KDS/nr_kdamonds" 2>/dev/null || true
-  printf '%s' 1 > "$KDS/nr_kdamonds"
+  nr=$(cat "$KDS/nr_kdamonds" 2>/dev/null || echo 0)
+  case "$nr" in ''|*[!0-9]*) nr=0 ;; esac
+  if [ "$nr" -lt 1 ]; then
+    printf '%s' 1 > "$KDS/nr_kdamonds"
+  fi
   printf '%s' 1 > "$KD/contexts/nr_contexts"
   printf '%s' paddr > "$CTX/operations"
   printf '%s' 5000    > "$CTX/monitoring_attrs/intervals/sample_us"
@@ -22,8 +29,14 @@ start() {
 
   mapfile -t ranges < <(
     if [ -r "$IOMEM" ] && grep -q 'System RAM' "$IOMEM" 2>/dev/null; then
-      grep 'System RAM' "$IOMEM" | head -8 | \
-        awk '{gsub(/:/,"",$1); split($1,a,"-"); printf "0x%s 0x%s\n", a[1], a[2]}'
+      grep 'System RAM' "$IOMEM" | awk '
+        BEGIN { n = 0 }
+        { gsub(/:/, "", $1); split($1, a, "-");
+          s = strtonum("0x" a[1]); e = strtonum("0x" a[2]);
+          if (n > 0 && s == prev_end + 1) { end[n-1] = e } else { start[n] = s; end[n] = e; n++ }
+          prev_end = e }
+        END { for (i = 0; i < n && i < 8; i++) printf "0x%x 0x%x\n", start[i], end[i];
+              if (n > 8) printf "kutu-damon: warning: monitoring the first 8 of %d System RAM ranges\n", n > "/dev/stderr" }'
     else
       awk '/MemTotal/ {printf "0x0 0x%x\n", $2*1024 - 1}' "$MEMINFO"
     fi
@@ -60,7 +73,6 @@ start() {
 stop() {
   [ -d "$DAMON_ROOT" ] || exit 0
   printf '%s' off > "$KD/state" 2>/dev/null || true
-  printf '%s' 0 > "$DAMON_ROOT/kdamonds/nr_kdamonds" 2>/dev/null || true
   echo "kutu-damon: stopped"
 }
 
