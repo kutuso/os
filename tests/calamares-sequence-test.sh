@@ -97,6 +97,8 @@ if [ -f "$dconf" ]; then
   grep -q 'disable sshd' "$dconf" || { echo "FAIL: shellprocess@done must disable sshd in the target"; fail=1; }
   grep -q 'firstboot-done' "$dconf" || { echo "FAIL: shellprocess@done must remove the live firstboot marker so the installed system recalibrates"; fail=1; }
   grep -q 'initramfs-linux.img' "$dconf" || { echo "FAIL: shellprocess@done must verify the target initramfs was built"; fail=1; }
+  grep -Eq 'pacman -R[a-z]*s.*calamares' "$dconf" || { echo "FAIL: shellprocess@done must remove the live installer packages via pacman; rm of calamares.desktop leaves the file package-owned and upgrades restore the root installer launcher"; fail=1; }
+  grep -q 'test ! -e .*/usr/share/applications/calamares.desktop' "$dconf" || { echo "FAIL: shellprocess@done must assert the installer launcher is gone from the target"; fail=1; }
 fi
 
 for inst in kernel 'done'
