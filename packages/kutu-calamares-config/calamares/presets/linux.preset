@@ -1,0 +1,14 @@
+# mkinitcpio preset file for the 'linux' package on an installed system.
+# The live ISO ships a preset whose only 'archiso' preset points at the
+# live drop-in /etc/mkinitcpio.conf.d/archiso.conf; the installer deletes
+# that drop-in, so the target must get this stock preset instead or
+# `mkinitcpio -p linux` fails and the installed system has no initramfs.
+
+ALL_kver='/boot/vmlinuz-linux'
+
+PRESETS=('default' 'fallback')
+
+default_image="/boot/initramfs-linux.img"
+
+fallback_image="/boot/initramfs-linux-fallback.img"
+fallback_options="-S autodetect"

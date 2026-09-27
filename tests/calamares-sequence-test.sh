@@ -55,6 +55,13 @@ if [ "$kpos" -ge 0 ]; then
   grep -q "\${ROOT}/boot/" "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not copy into the target /boot"; fail=1; }
   grep -q 'vmlinuz-linux' "$kconf" || { echo "FAIL: shellprocess@kernel.conf does not copy the kernel"; fail=1; }
   grep -q 'mkinitcpio.conf.d/archiso.conf' "$kconf" || { echo "FAIL: shellprocess@kernel.conf must remove the archiso mkinitcpio drop-in; it overrides HOOKS and rebuilds a live-only initramfs"; fail=1; }
+  grep -q 'presets/linux.preset' "$kconf" || { echo "FAIL: shellprocess@kernel.conf must install the stock linux.preset into the target; the copied live preset references the deleted archiso drop-in and mkinitcpio -p linux fails"; fail=1; }
+  preset="$CONF_DIR/presets/linux.preset"
+  [ -f "$preset" ] || { echo "FAIL: missing $preset"; fail=1; }
+  if [ -f "$preset" ]; then
+    grep -Eq "archiso_config|^PRESETS=\('archiso'" "$preset" && { echo "FAIL: presets/linux.preset must not select the live archiso config/drop-in"; fail=1; }
+    grep -q "^default_image=" "$preset" || { echo "FAIL: presets/linux.preset must build the default initramfs image"; fail=1; }
+  fi
   if grep -q 'HOOKS=' "$kconf"; then
     echo "FAIL: shellprocess@kernel.conf hand-writes HOOKS; initcpiocfg must derive them from the actual partitions (a hand-written list missing block/filesystems/encrypt breaks installed boot)"
     fail=1
@@ -139,6 +146,10 @@ else
   }
   grep -q "^etc/calamares/modules/mount.conf$" "$tmp/kutuconf-files" || {
     echo "FAIL: built kutu-calamares-config lacks mount.conf (stale package vs sources?)"
+    fail=1
+  }
+  grep -q "^etc/calamares/presets/linux.preset$" "$tmp/kutuconf-files" || {
+    echo "FAIL: built kutu-calamares-config lacks presets/linux.preset (stale package vs sources?)"
     fail=1
   }
 fi
