@@ -1,1 +1,2 @@
 enable kutu-firstboot.service
+enable kutu-check-kernel.service

@@ -1,4 +1,4 @@
 post_install() {
-  systemctl enable kutu-firstboot.service 2>/dev/null || true
+  systemctl enable kutu-firstboot.service kutu-check-kernel.service 2>/dev/null || true
   ln -sfn /usr/lib/kutu/os-release /etc/os-release
 }

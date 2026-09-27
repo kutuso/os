@@ -1,0 +1,7 @@
+[Unit]
+Description=Check kernel features for the kutu OS memory stack
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c '/usr/bin/kutu-check-kernel || true'
