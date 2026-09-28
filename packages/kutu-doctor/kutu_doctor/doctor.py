@@ -120,6 +120,9 @@ def config_checks() -> list[Check]:
     current = mode_mod.current_mode()
     total = memory.memtotal_kb()
     recommended = memory.detect_mode(total) if total else None
+    advisory = f"current={current or '?'} recommended-for-this-ram={recommended or '?'}"
+    if current in mode_mod.MODES and recommended and current != recommended:
+        advisory += " (deliberate choice: informational)"
     return [
         Check(
             "mode-config",
@@ -129,8 +132,8 @@ def config_checks() -> list[Check]:
         ),
         Check(
             "mode-recommended",
-            None if current is None or recommended is None else current == recommended,
-            f"current={current or '?'} recommended-for-this-ram={recommended or '?'}",
+            current in mode_mod.MODES,
+            advisory,
             "kutu mode set applies the matching ceilings",
         ),
     ]
@@ -142,3 +145,7 @@ def run_all() -> list[Check]:
 
 def failures(checks: list[Check]) -> list[Check]:
     return [c for c in checks if c.ok is False]
+
+
+def indeterminate(checks: list[Check]) -> list[Check]:
+    return [c for c in checks if c.ok is None]

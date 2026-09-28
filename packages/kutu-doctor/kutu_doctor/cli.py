@@ -4,8 +4,7 @@ from __future__ import annotations
 
 import json as jsonlib
 import os
-import shutil
-from pathlib import Path
+import shlex
 
 import typer
 from rich.console import Console
@@ -38,6 +37,15 @@ console = Console()
 err_console = Console(stderr=True)
 
 MODE_ARGUMENT = typer.Argument(help="saver | balanced | performance")
+
+
+def _refuse_target_root(action: str) -> None:
+    if paths.is_target_root():
+        err_console.print(
+            f"kutu-doctor: {action} refuses to run against a KUTU_ROOT target; "
+            "KUTU_ROOT is for read-only inspection (tests use KUTU_SANDBOX=1)"
+        )
+        raise SystemExit(2)
 
 
 def _print_json(payload: dict) -> None:
@@ -87,6 +95,7 @@ def check(
     """Verify every feature the memory stack relies on (like kutu-check-kernel)."""
     checks = doctor_mod.run_all()
     failed = doctor_mod.failures(checks)
+    unknown = doctor_mod.indeterminate(checks)
     if as_json:
         _print_json(
             {
@@ -95,6 +104,7 @@ def check(
                     for c in checks
                 ],
                 "failed": len(failed),
+                "indeterminate": len(unknown),
             }
         )
     else:
@@ -107,9 +117,16 @@ def check(
                 if check.hint:
                     err_console.print(f"hint [{check.name}]: {check.hint}")
             console.print(f"[#ff6b6b]{len(failed)} check(s) failed[/]")
+        elif unknown:
+            console.print(
+                f"[{render.R2}]{len(unknown)} check(s) could not be determined[/]"
+            )
         else:
             console.print(f"[{render.R4}]all checks passed[/]")
-    raise SystemExit(1 if failed else 0)
+    if failed:
+        raise SystemExit(1)
+    if unknown:
+        raise SystemExit(2)
 
 
 @mode_app.callback()
@@ -140,9 +157,14 @@ def mode_set(
             f"kutu-doctor: unknown mode '{name}' (expected: {' | '.join(mode_mod.MODES)})"
         )
         raise SystemExit(2)
-    if live:
-        system.require_root(f"mode set {name}")
-    mode_mod.set_mode(name, apply_live=live)
+    _refuse_target_root("mode set")
+    system.require_root(f"mode set {name}")
+    try:
+        mode_mod.set_mode(name, apply_live=live)
+    except system.RunError as error:
+        err_console.print(f"kutu-doctor: applying the mode failed: {error}")
+        err_console.print("the config was persisted; run 'kutu-doctor mode apply' after fixing")
+        raise SystemExit(1) from error
     mode_info = mode_mod.MODES[name]
     console.print(
         f"[{render.R4}]mode set:[/] [{render.R6}]{name}[/] "
@@ -156,13 +178,18 @@ def mode_set(
 @mode_app.command("apply")
 def mode_apply() -> None:
     """Re-apply the persisted mode's ceilings (idempotent)."""
+    _refuse_target_root("mode apply")
     system.require_root("mode apply")
     current = mode_mod.current_mode()
     if current not in mode_mod.MODES:
         root = os.environ.get("KUTU_ROOT", "")
         err_console.print(f"kutu-doctor: no valid MODE in {root}/etc/kutu/memory.conf")
         raise SystemExit(2)
-    applied_now = mode_mod.apply_mode(mode_mod.MODES[current])
+    try:
+        applied_now = mode_mod.apply_mode(mode_mod.MODES[current])
+    except system.RunError as error:
+        err_console.print(f"kutu-doctor: mode apply failed: {error}")
+        raise SystemExit(1) from error
     for unit, value in applied_now.items():
         console.print(f"[{render.R4}]applied[/] {unit}: MemoryHigh={render.human_bytes(value)}")
 
@@ -210,9 +237,16 @@ def apps_run(
     if app_profile is None:
         err_console.print(f"kutu-doctor: no profile '{profile}' in /etc/kutu/apps.d")
         raise SystemExit(2)
+    if app_profile.invalid:
+        keys = ", ".join(app_profile.invalid)
+        err_console.print(
+            f"kutu-doctor: profile '{profile}' has invalid {keys} in {app_profile.source}; "
+            "refusing to launch without its safety ceilings"
+        )
+        raise SystemExit(2)
     argv = apps_mod.build_scope_command(app_profile, list(cmd), memory.memtotal_kb())
     if os.environ.get("KUTU_DRY_RUN") == "1":
-        console.print(" ".join(argv), soft_wrap=True, markup=False)
+        console.print(shlex.join(argv), soft_wrap=True, markup=False)
         return
     os.execvp(argv[0], argv)
 
@@ -222,16 +256,22 @@ def reset(
     yes: bool = typer.Option(False, "--yes", "-y", help="skip the confirmation prompt"),
 ) -> None:
     """Return the memory stack to stock Arch behavior (runs kutu-reset)."""
-    binary = shutil.which("kutu-reset") or str(
-        Path(os.environ.get("KUTU_ROOT", "/")) / "usr/bin/kutu-reset"
-    )
+    if paths.is_sandboxed() or paths.is_target_root():
+        err_console.print(
+            "kutu-doctor: reset refuses to run against a KUTU_ROOT target; "
+            "kutu-reset operates on the live /etc, /sys and /boot, so run it "
+            "on the booted system"
+        )
+        raise SystemExit(2)
+    system.require_root("reset")
+    binary = "/usr/bin/kutu-reset"
     if not (os.path.isfile(binary) and os.access(binary, os.X_OK)):
         err_console.print(
             "kutu-doctor: kutu-reset not found — is kutu-memory installed? "
             "(https://kutuso.github.io/os/repo/x86_64/)"
         )
         raise SystemExit(1)
-    if not yes and not paths.is_sandboxed():
+    if not yes:
         apply_it = typer.confirm(
             "Revert all kutu memory tuning to stock Arch defaults and reboot later?"
         )
