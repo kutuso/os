@@ -39,6 +39,9 @@ expect {
 send -- {echo SMOKE:zswap:$(cat /sys/module/zswap/parameters/compressor):$(cat /sys/module/zswap/parameters/enabled):$(cat /sys/module/zswap/parameters/shrinker_enabled):$(cat /sys/module/zswap/parameters/zpool 2>/dev/null || echo default):$(cat /sys/module/zswap/parameters/max_pool_percent)}
 send "\r"
 expect {\]# $}
+send -- {echo SMOKE:swap:$(swapon --noheadings --show=NAME | head -1); echo SMOKE:net:$(systemctl is-enabled systemd-networkd 2>&1 | head -1):$(systemctl is-active NetworkManager)}
+send "\r"
+expect {\]# $}
 send -- {echo SMOKE:mglru:$(cat /sys/kernel/mm/lru_gen/enabled):$(cat /sys/kernel/mm/lru_gen/min_ttl_ms)}
 send "\r"
 expect {\]# $}
@@ -69,6 +72,9 @@ expect {\]# $}
 send -- {[ -f /home/kutu/.config/kutu/wallpaper-applied ] && echo SMOKE:wallpaper-marked:ok || echo SMOKE:wallpaper-marked:fail; grep -q "backgrounds/xfce/kutu-default.svg" /home/kutu/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml && echo SMOKE:wallpaper-set:ok || echo SMOKE:wallpaper-set:fail}
 send "\r"
 expect {\]# $}
+send -- {grep -q whiskermenu /home/kutu/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml && echo SMOKE:panel:ok || echo SMOKE:panel:fail; pgrep -x polkit-gnome-au >/dev/null && echo SMOKE:polkit:ok || echo SMOKE:polkit:fail}
+send "\r"
+expect {\]# $}
 send -- {grep -q "Materia-dark" /home/kutu/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml && echo SMOKE:xfwm4:ok || echo SMOKE:xfwm4:fail; grep -q "Papirus-Dark" /home/kutu/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml && echo SMOKE:icons:ok || echo SMOKE:icons:fail}
 send "\r"
 expect {\]# $}
@@ -95,8 +101,12 @@ ckr() {
   else echo "FAIL: $1"; fail=1; fi
 }
 
-ck "zswap params" "SMOKE:zswap:zstd:Y:Y"
-ckr "zswap pool cap" "SMOKE:zswap:zstd:Y:Y:(default|zsmalloc):35"
+ckr "zswap params" "SMOKE:zswap:zstd:[YN]:Y"
+ckr "zswap pool cap" "SMOKE:zswap:zstd:[YN]:Y:(default|zsmalloc):35"
+ckr "swap device active (zram or disk)" "SMOKE:swap:/dev/"
+ck "single network manager" "SMOKE:net:disabled:active"
+ck "kutu panel config" "SMOKE:panel:ok"
+ck "polkit agent running" "SMOKE:polkit:ok"
 ckr "MGLRU" "SMOKE:mglru:(0x0007|7):1000"
 ck "DAMON state" "SMOKE:damon:on"
 for s in systemd-oomd kutu-memory-early kutu-damon kutu-firstboot NetworkManager lightdm; do

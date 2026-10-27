@@ -8,7 +8,10 @@ chk() {
   else printf 'FAIL %-22s %s\n' "$name" "$detail"; fail=1; fi
 }
 zswap_enabled=$(cat "$SYS/module/zswap/parameters/enabled" 2>/dev/null || echo N)
-chk zswap "$([ "$zswap_enabled" = Y ] && echo 1 || echo 0)" "enabled=$zswap_enabled"
+zram_swap=0
+awk 'NR > 1 && $1 ~ /\/zram/ {found=1} END {exit !found}' "$PROC/swaps" 2>/dev/null && zram_swap=1
+chk zswap "$([ "$zswap_enabled" = Y ] || [ "$zram_swap" = 1 ] && echo 1 || echo 0)" \
+  "enabled=$zswap_enabled$([ "$zram_swap" = 1 ] && [ "$zswap_enabled" != Y ] && echo ' (zram swap active instead)')"
 chk zswap-compressor "$([ "$(cat "$SYS/module/zswap/parameters/compressor" 2>/dev/null)" = zstd ] && echo 1 || echo 0)" \
   "want zstd got $(cat "$SYS/module/zswap/parameters/compressor" 2>/dev/null)"
 chk zswap-zpool "$([ ! -e "$SYS/module/zswap/parameters/zpool" ] || [ "$(cat "$SYS/module/zswap/parameters/zpool" 2>/dev/null)" = zsmalloc ] && echo 1 || echo 0)" \

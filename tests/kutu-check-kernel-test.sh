@@ -39,6 +39,9 @@ printf 1000 > "$tmp/sys/kernel/mm/lru_gen/min_ttl_ms"
 printf N > "$tmp/sys/module/zswap/parameters/enabled"
 run_ck && { echo "FAIL: disabled zswap should fail"; exit 1; } || true
 
+printf 'Filename\tType\tSize\tUsed\tPriority\n/dev/zram0\tpartition\t1024\t0\t100\n' > "$tmp/proc/swaps"
+run_ck || { echo "FAIL: disabled zswap with active zram swap should pass"; exit 1; }
+
 make_fixture
 run_ck || { echo "FAIL: fixture restore should pass"; exit 1; }
 
