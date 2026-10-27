@@ -36,6 +36,9 @@ expect {
   -re {\]# $} {}
   timeout { puts "TIMEOUT waiting for serial root shell"; exit 1 }
 }
+send -- {export SYSTEMD_PAGER=cat PAGER=cat}
+send "\r"
+expect {\]# $}
 send -- {echo SMOKE:zswap:$(cat /sys/module/zswap/parameters/compressor):$(cat /sys/module/zswap/parameters/enabled):$(cat /sys/module/zswap/parameters/shrinker_enabled):$(cat /sys/module/zswap/parameters/zpool 2>/dev/null || echo default):$(cat /sys/module/zswap/parameters/max_pool_percent)}
 send "\r"
 expect {\]# $}
