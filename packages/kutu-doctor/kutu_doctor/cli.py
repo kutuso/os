@@ -8,6 +8,7 @@ import shlex
 
 import typer
 from rich.console import Console
+from rich.markup import escape
 
 from . import __version__, memory, paths, render, system
 from . import apps as apps_mod
@@ -40,16 +41,17 @@ MODE_ARGUMENT = typer.Argument(help="saver | balanced | performance")
 
 
 def _refuse_target_root(action: str) -> None:
-    if paths.is_target_root():
+    if paths.mutation_blocked():
         err_console.print(
-            f"kutu-doctor: {action} refuses to run against a KUTU_ROOT target; "
-            "KUTU_ROOT is for read-only inspection (tests use KUTU_SANDBOX=1)"
+            f"kutu-doctor: {action} refuses to run with KUTU_ROOT/KUTU_SYSFS/KUTU_PROC/"
+            "KUTU_SYSTEMCTL/KUTU_SYSTEMD_RUN overrides; they are for read-only inspection "
+            "(tests use KUTU_ROOT with KUTU_SANDBOX=1)"
         )
         raise SystemExit(2)
 
 
 def _print_json(payload: dict) -> None:
-    console.print_json(jsonlib.dumps(payload))
+    typer.echo(jsonlib.dumps(payload, indent=2))
 
 
 @app.callback()
@@ -115,7 +117,7 @@ def check(
         if failed:
             for check in failed:
                 if check.hint:
-                    err_console.print(f"hint [{check.name}]: {check.hint}")
+                    err_console.print(f"hint [{check.name}]: {check.hint}", markup=False)
             console.print(f"[#ff6b6b]{len(failed)} check(s) failed[/]")
         elif unknown:
             console.print(
@@ -220,11 +222,13 @@ def apps_default(ctx: typer.Context) -> None:
             extras.append("merge")
         if extras:
             line += f" [dim]· {' · '.join(extras)}[/]"
-        console.print(f"[{color}]{profile.name:<14}[/] {line}")
+        console.print(f"[{color}]{escape(profile.name):<14}[/] {line}")
     console.print("\n[dim]run with:[/] kutu-doctor apps run <profile> <command...>\n")
 
 
-@apps_app.command("run")
+@apps_app.command(
+    "run", context_settings={"allow_interspersed_args": False, "ignore_unknown_options": True}
+)
 def apps_run(
     profile: str = typer.Argument(help="profile name from /etc/kutu/apps.d"),
     cmd: list[str] = typer.Argument(help="command (and arguments) to run"),
@@ -248,7 +252,11 @@ def apps_run(
     if os.environ.get("KUTU_DRY_RUN") == "1":
         console.print(shlex.join(argv), soft_wrap=True, markup=False)
         return
-    os.execvp(argv[0], argv)
+    try:
+        os.execvp(argv[0], argv)
+    except OSError as error:
+        err_console.print(f"kutu-doctor: cannot launch {argv[0]}: {error}", markup=False)
+        raise SystemExit(127) from error
 
 
 @app.command()
@@ -256,7 +264,7 @@ def reset(
     yes: bool = typer.Option(False, "--yes", "-y", help="skip the confirmation prompt"),
 ) -> None:
     """Return the memory stack to stock Arch behavior (runs kutu-reset)."""
-    if paths.is_sandboxed() or paths.is_target_root():
+    if paths.is_sandboxed() or paths.mutation_blocked():
         err_console.print(
             "kutu-doctor: reset refuses to run against a KUTU_ROOT target; "
             "kutu-reset operates on the live /etc, /sys and /boot, so run it "
