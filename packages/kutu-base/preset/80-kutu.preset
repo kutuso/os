@@ -1,2 +1,11 @@
 enable kutu-firstboot.service
 enable kutu-check-kernel.service
+disable systemd-networkd.service
+disable systemd-networkd-wait-online.service
+disable systemd-homed.service
+enable fstrim.timer
+enable bluetooth.service
+enable cups.socket
+enable ufw.service
+enable tlp.service
+enable thermald.service
