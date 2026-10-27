@@ -1,21 +1,33 @@
 #!/usr/bin/env bash
 set -euo pipefail
 SYS="${KUTU_SYSFS:-/sys}"
+SWAPS="${KUTU_SWAPS:-/proc/swaps}"
+MEMINFO="${KUTU_MEMINFO:-/proc/meminfo}"
+ZRAM_MAX_KB=$(( 16 * 1024 * 1024 ))
 
-# zswap zpool: kernels < 6.10 expose a zpool param that cannot reference
-# modular zsmalloc from cmdline (params parse before modules load), so set it
-# here. Kernels >= 6.10 removed the param entirely: zsmalloc is the baked-in
-# default and there is nothing to do.
 if [ -e "$SYS/module/zswap/parameters/zpool" ] && [ "$(cat "$SYS/module/zswap/parameters/zpool" 2>/dev/null)" != "zsmalloc" ]; then
   modprobe zsmalloc 2>/dev/null || true
   printf '%s' zsmalloc > "$SYS/module/zswap/parameters/zpool" 2>/dev/null || true
 fi
 
-# MGLRU: enable aging + page-table walks + bloom filters; protect the working
-# set for at least 1s (anti-thrash).
 L="$SYS/kernel/mm/lru_gen"
 if [ -e "$L/enabled" ]; then
   printf '%s' "0x0007" > "$L/enabled"
   [ -e "$L/min_ttl_ms" ] && printf '%s' "1000" > "$L/min_ttl_ms"
 fi
-echo "kutu-memory-early: zpool=$(cat "$SYS/module/zswap/parameters/zpool" 2>/dev/null) mglru=$(cat "$L/enabled" 2>/dev/null)"
+
+swap_active=$(awk 'NR > 1' "$SWAPS" 2>/dev/null | wc -l)
+if [ "$swap_active" -eq 0 ]; then
+  total_kb=$(awk '/MemTotal/ {print $2}' "$MEMINFO")
+  [ "$total_kb" -gt "$ZRAM_MAX_KB" ] && total_kb=$ZRAM_MAX_KB
+  modprobe zram 2>/dev/null || true
+  if dev=$(zramctl --find --algorithm zstd --size "${total_kb}K" 2>/dev/null) && [ -n "$dev" ]; then
+    mkswap "$dev" >/dev/null
+    swapon --priority 100 "$dev"
+    [ -e "$SYS/module/zswap/parameters/enabled" ] && printf '%s' N > "$SYS/module/zswap/parameters/enabled"
+    echo "kutu-memory-early: no swap found; zram swap $dev (${total_kb}K, zstd), zswap off"
+  else
+    echo "kutu-memory-early: no swap found and zram unavailable; running without swap"
+  fi
+fi
+echo "kutu-memory-early: zpool=$(cat "$SYS/module/zswap/parameters/zpool" 2>/dev/null) mglru=$(cat "$L/enabled" 2>/dev/null) swaps=$(awk 'NR > 1' "$SWAPS" 2>/dev/null | wc -l)"

@@ -1,11 +1,11 @@
 pkgname=kutu-memory
 pkgver=0.1.0
-pkgrel=7
-pkgdesc="kutu OS Tier-0 memory stack: zswap, MGLRU, journald, I/O scheduler tuning"
+pkgrel=8
+pkgdesc="kutu OS Tier-0 memory stack: zswap or zram, MGLRU, journald, I/O scheduler tuning"
 arch=(any)
 url="https://kutu.so"
 license=(MIT)
-depends=(systemd grub)
+depends=(systemd grub util-linux)
 install=kutu-memory.install
 package() {
   install -Dm644 "$startdir/sysctl/60-kutu-memory.conf" -t "$pkgdir/etc/sysctl.d/"

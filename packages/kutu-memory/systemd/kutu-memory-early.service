@@ -1,6 +1,6 @@
 [Unit]
 Description=kutu OS early memory stack activation (zswap zpool, MGLRU)
-After=systemd-modules-load.service
+After=systemd-modules-load.service swap.target
 Before=multi-user.target
 
 [Service]

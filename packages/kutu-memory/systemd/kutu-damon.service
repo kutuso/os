@@ -1,6 +1,6 @@
 [Unit]
 Description=kutu OS DAMON proactive reclaim
-After=multi-user.target
+After=multi-user.target kutu-memory-early.service
 ConditionPathExists=/sys/kernel/mm/damon/admin
 
 [Service]
