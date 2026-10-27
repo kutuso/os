@@ -6,7 +6,50 @@ the repo's `vX.Y.Z` tags. The ISO for each tag is attached to the matching
 [GitHub release](https://github.com/kutuso/os/releases); installed systems
 move between versions with plain `pacman -Syu`.
 
-## Unreleased
+## 0.2.0 - 2026-10-28
+
+Installed-system pass: the ISO was installed under QEMU (UEFI) with the real
+Calamares wizard, rebooted from disk and checked, and the memory stack was
+reviewed for real effect.
+
+### Fixed
+
+- **Update channel was dead.** The `[kutu]` repository was never published, so
+  `pacman -Syu` on an installed system aborted with a 404 for `kutu.db`. The
+  repository is now published under `docs/repo/x86_64`.
+- **Two network managers.** `systemd-networkd`, its wait-online unit and
+  `systemd-homed` were enabled next to NetworkManager; they are now disabled
+  and NetworkManager owns networking and `resolv.conf`.
+- **zswap did nothing without swap.** On a system with no swap device
+  (live session, VMs, installs with swap set to none) the whole compression
+  layer was inert. `kutu-memory-early` now creates a zstd zram swap sized to
+  RAM (capped at 16G) when no swap is active and turns zswap off so pages are
+  not compressed twice. With disk swap, zswap behaves as before.
+  `kutu-check-kernel` and `kutu-doctor check` accept either layer.
+- **No polkit agent.** Graphical privilege prompts (Bluetooth, printers,
+  disks) could not appear; `polkit-gnome` now starts with the session.
+- **Installer launcher was untrusted.** XFCE showed an "Untrusted application
+  launcher" warning on the live desktop; the live session now marks the
+  installer trusted at login (removed again on install).
+- **Installer slideshow was a blank white box.** Replaced with dark slides.
+- `build-packages.sh` aborted with "duplicate target" when an older version of
+  a package was still on disk.
+
+### Added
+
+- Mac-style desktop: slim top bar (searchable launcher, centred clock, status
+  area), self-hiding dock with running apps, `Super`+`Space` search,
+  `Super`+`Q`/`H`/`M`/`Tab`, `Super`+`Shift`+`3`/`4` screenshots, tap-to-click
+  and natural scrolling on touchpads.
+- Bluetooth (bluez, blueman), printing (CUPS), a default-deny firewall (ufw),
+  TLP and thermald enabled, weekly TRIM, archive support in Thunar,
+  MTP/SMB/AFC in the file manager, GTK portals.
+- `kutu-doctor` 0.2.0 (hardened against missing or hung `systemctl`, quoted
+  config values, fake-path writes, non-tty dashboards; 77 tests) and
+  `libmempressure` 0.2.1 (locale-free parser, monotonic poll clock, hidden
+  symbols, binding fixes) are published to the AUR.
+
+### Earlier hardening in this release
 
 Audit-driven hardening pass over M1. The full review behind these changes
 covered installer bootability, the update channel, the memory stack's

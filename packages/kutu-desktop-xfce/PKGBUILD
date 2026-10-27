@@ -1,6 +1,6 @@
 pkgname=kutu-desktop-xfce
-pkgver=0.1.0
-pkgrel=6
+pkgver=0.2.0
+pkgrel=1
 pkgdesc="kutu OS XFCE desktop: curated, themed, memory-wrapped"
 arch=(any)
 url="https://kutu.so"
@@ -23,6 +23,7 @@ package() {
   install -Dm644 "$startdir/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml" \
                   "$startdir/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml" \
                   "$startdir/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml" \
+                  "$startdir/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml" \
                   "$startdir/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml" \
                   -t "$pkgdir/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/"
   install -Dm644 "$startdir/firefox/mozilla.cfg" -t "$pkgdir/usr/lib/firefox/"

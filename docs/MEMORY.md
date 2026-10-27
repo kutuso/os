@@ -24,6 +24,15 @@ pressure by the zswap shrinker.
 - Compression costs a little CPU; the pool is capped so it can never eat
   your RAM.
 
+### zram — the fallback when there is no swap
+
+zswap needs a swap device behind it. If kutu OS boots with none (a live
+session, a virtual machine, an install with swap set to "none"), it creates a
+zstd zram swap device sized to your RAM (capped at 16 GB) at priority 100 and
+turns zswap off, so memory is compressed once rather than twice. When a disk
+swap exists, zswap stays on and zram is not created. `kutu-doctor check`
+accepts either layer.
+
 ### MGLRU — better eviction decisions
 
 The multi-generational LRU is the kernel's modern page-aging engine (it

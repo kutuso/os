@@ -1,6 +1,6 @@
 pkgname=kutu-base
-pkgver=0.1.0
-pkgrel=9
+pkgver=0.2.0
+pkgrel=1
 pkgdesc="kutu OS base: identity, first-boot calibration, app launcher wrapper, kernel feature prober"
 arch=(any)
 url="https://kutu.so"

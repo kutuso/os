@@ -1,6 +1,6 @@
 pkgname=kutu-doctor
-pkgver=0.1.0
-pkgrel=4
+pkgver=0.2.0
+pkgrel=1
 pkgdesc="kutu OS memory-health dashboard and control CLI"
 arch=(any)
 url="https://kutu.so"
