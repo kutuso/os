@@ -2,6 +2,7 @@ enable kutu-firstboot.service
 enable kutu-check-kernel.service
 disable systemd-networkd.service
 disable systemd-networkd-wait-online.service
+disable systemd-resolved.service
 disable systemd-homed.service
 enable fstrim.timer
 enable bluetooth.service

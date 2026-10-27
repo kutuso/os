@@ -22,10 +22,10 @@ ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 systemctl set-default graphical.target
 systemctl disable systemd-networkd.service systemd-networkd.socket systemd-networkd-wait-online.service \
   systemd-networkd-varlink.socket systemd-networkd-varlink-metrics.socket systemd-networkd-resolve-hook.socket \
+  systemd-resolved.service systemd-resolved-monitor.socket systemd-resolved-varlink.socket \
   systemd-homed.service systemd-homed-activate.service 2>/dev/null || true
 systemctl mask systemd-rfkill.service systemd-rfkill.socket
-ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 sed -i 's/^ENABLED=.*/ENABLED=yes/' /etc/ufw/ufw.conf
-systemctl enable NetworkManager.service sshd.service systemd-resolved.service systemd-timesyncd.service \
+systemctl enable NetworkManager.service sshd.service systemd-timesyncd.service \
   fstrim.timer bluetooth.service cups.socket ufw.service tlp.service thermald.service
 # kutu-* units, lightdm and oomd are enabled by their packages' install scriptlets

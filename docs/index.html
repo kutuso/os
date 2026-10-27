@@ -389,6 +389,20 @@
       .card:hover, .btn:hover, .shot img:hover, .stack .cell:hover { transform: none; }
       .btn-primary::after { display: none; }
     }
+
+    .dl-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;margin-top:28px;align-items:start}
+    .dl-card{background:var(--surface);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius);padding:28px;box-shadow:var(--glow)}
+    .dl-card h3{margin:0 0 6px;font-size:1.25rem}
+    .dl-meta{color:var(--muted);font-size:.92rem;margin:0 0 18px}
+    .dl-sha{font-family:ui-monospace,monospace;font-size:.78rem;color:var(--muted);word-break:break-all;margin:14px 0 0}
+    .reqs{width:100%;border-collapse:collapse;font-size:.95rem}
+    .reqs td{padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top}
+    .reqs td:first-child{color:var(--muted);width:34%}
+    .faq{margin-top:34px;display:grid;gap:10px}
+    .faq details{background:var(--surface);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px 18px}
+    .faq summary{cursor:pointer;font-weight:600}
+    .faq p{color:var(--muted);margin:10px 0 0}
+    @media (max-width:820px){.dl-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -402,9 +416,10 @@
       <a href="#features">Features</a>
       <a href="#stack">Stack</a>
       <a href="#screens">Screenshots</a>
+      <a href="#download">Download</a>
       <a href="docs.html">Docs</a>
       <a href="https://github.com/kutuso/os">GitHub</a>
-      <a class="cta" href="https://github.com/kutuso/os/releases/latest">Download</a>
+      <a class="cta" href="#download">Download</a>
     </div>
   </div>
 </nav>
@@ -431,7 +446,7 @@
         ordinary desktop, with safe defaults and nothing to configure.
       </p>
       <div class="hero-btns">
-        <a class="btn btn-primary" href="https://github.com/kutuso/os/releases/latest">
+        <a class="btn btn-primary" href="#download">
           <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg>
           Download ISO
         </a>
@@ -643,6 +658,41 @@
   </div>
 </section>
 
+<section id="download">
+  <div class="wrap">
+    <div class="kicker reveal" style="--k:#BAFFC9">Get it</div>
+    <h2 class="reveal">Download kutu OS __VERSION__</h2>
+    <p class="section-sub reveal">Boot the live session first. Nothing touches your disk until you press Install.</p>
+    <div class="dl-grid">
+      <div class="dl-card reveal">
+        <h3>kutu-os-__VERSION__-x86_64.iso</h3>
+        <p class="dl-meta">__SIZE__ &middot; x86_64 &middot; BIOS and UEFI</p>
+        <a class="btn btn-primary" href="__ISO_URL__">
+          <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg>
+          Download ISO
+        </a>
+        <p class="dl-sha">sha256 <a href="__SHA_URL__">__SHA__</a></p>
+        <p class="dl-meta" style="margin-top:18px">Verify: <code>sha256sum -c kutu-os-__VERSION__-x86_64.iso.sha256</code><br>Write to USB: <code>sudo dd if=kutu-os-__VERSION__-x86_64.iso of=/dev/sdX bs=4M status=progress oflag=sync</code> (or Ventoy, balenaEtcher).</p>
+      </div>
+      <div class="dl-card reveal">
+        <h3>What you need</h3>
+        <table class="reqs">
+          <tr><td>RAM</td><td>2&nbsp;GB minimum, 4&nbsp;GB+ comfortable. Idle desktop uses roughly 550&nbsp;MB.</td></tr>
+          <tr><td>Disk</td><td>20&nbsp;GB or more. Swap is created for you; with none, compressed zram swap is used.</td></tr>
+          <tr><td>Firmware</td><td>BIOS or UEFI. Secure Boot must be off for now (the bootloader is not signed).</td></tr>
+          <tr><td>Network</td><td>Not needed to install. Updates arrive with <code>pacman -Syu</code>.</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="faq">
+      <details><summary>Is it like macOS?</summary><p>The layout is: a slim top bar with a searchable launcher, a dock at the bottom that hides itself, <code>Super</code>+<code>Space</code> to search, <code>Super</code>+<code>Q</code> to quit a window, <code>Super</code>+<code>Tab</code> to switch apps, tap-to-click and natural scrolling on touchpads. It is still Linux underneath, so software comes from the package manager.</p></details>
+      <details><summary>Why XFCE and not GNOME or i3?</summary><p>GNOME costs several hundred megabytes more at idle, which defeats the purpose. A tiling window manager like i3 is lighter still, but it asks every user to learn a new way of working. XFCE with a dock gives most of the saving and none of the learning curve.</p></details>
+      <details><summary>What does the memory stack actually do?</summary><p>It compresses cold memory (zram, or zswap in front of a disk swap), uses the kernel's multi-generational LRU to pick better pages to evict, reclaims idle regions early with DAMON, and lets systemd-oomd stop a runaway app before the desktop freezes. Browsers run under a soft memory ceiling. <code>kutu-doctor</code> shows all of it live.</p></details>
+      <details><summary>How do I undo the tuning?</summary><p>Run <code>sudo kutu-reset</code>. It restores stock Arch defaults for every setting kutu changes.</p></details>
+    </div>
+  </div>
+</section>
+
 <section id="arch">
   <div class="wash" style="width:460px;height:460px;background:rgba(212,186,255,0.05);bottom:-8%;left:-8%"></div>
   <div class="wrap">
@@ -674,7 +724,7 @@ Server = https://kutuso.github.io/os/repo/$arch/</pre>
   <div class="wrap">
     <h2>Give your gigs their <span class="grad">jobs back</span></h2>
     <p>Boot the live USB and see the difference before anything touches your disk.</p>
-    <a class="btn btn-primary" href="https://github.com/kutuso/os/releases/latest">
+    <a class="btn btn-primary" href="#download">
       <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16"/></svg>
       Download the ISO
     </a>
