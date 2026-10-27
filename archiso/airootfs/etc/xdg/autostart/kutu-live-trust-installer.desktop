@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=kutu live installer trust
+Exec=/usr/lib/kutu/live-trust-installer.sh
+Terminal=false
+NoDisplay=true
+OnlyShowIn=XFCE;
