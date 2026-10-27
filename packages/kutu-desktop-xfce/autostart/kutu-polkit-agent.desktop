@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=kutu polkit agent
+Comment=Graphical authentication prompts for privileged actions
+Exec=/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+Terminal=false
+NoDisplay=true
+OnlyShowIn=XFCE;
