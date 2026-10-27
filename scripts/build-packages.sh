@@ -52,6 +52,7 @@ for pkg in packages/*/; do
           || { echo "ERROR: dependency install failed: $d (package $name)" >&2; exit 1; }
       fi
     done)
+  find "$pkg" -maxdepth 1 -name "${name}-*.pkg.tar.zst" ! -name "${name}-${ver}-*" -delete
   if [ "${KUTU_FORCE_BUILD:-0}" != 1 ] && compgen -G "${pkg}${name}-${ver}-"*.pkg.tar.zst >/dev/null; then
     echo "   $name: cached ($ver)"
   else
